@@ -49,7 +49,7 @@ function logo() {
 
 function credits() {
 
-    echo -e  "${WHITE}┃                           ${PURPLE}A tool by sloraris${WHITE}                          ┃${NC}"
+    echo -e  "${WHITE}┃                           ${PURPLE}a tool by sloraris${WHITE}                          ┃${NC}"
 }
 
 function version() {
@@ -68,7 +68,7 @@ function title() {
     # ┃                ╚═╝        ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝                 ┃ #
     # ┃                Puppet Assisted Installation Navigator                 ┃ # logo
     # ┃                                                                       ┃ # er
-    # ┃                           A tool by sloraris                          ┃ # credits
+    # ┃                           a tool by sloraris                          ┃ # credits
     # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃ v************* ┃━━┛ # version
 
     top_bar
