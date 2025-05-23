@@ -31,6 +31,7 @@ function splash_screen() {
     for i in {1..3}; do  # Number of color cycles
         for ((j=0; j<${#colors[@]}; j++)); do
             local color="${colors[j]}"
+            echo
             top_bar
             er
             for line in "${logo[@]}"; do
@@ -41,7 +42,7 @@ function splash_screen() {
             er
             credits
             bottom_bar
-            echo -en "\033[13A"
+            echo -en "\033[14A"
             sleep 0.1
         done
     done
