@@ -117,7 +117,7 @@ function main_menu_input() {
 function main_menu() {
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ main_menu_header
-# ┃                                                                       ┃ er
+# ┃                                                                       ┃
 # ┃        Host: ****************                                         ┃ print_puppet_info
 # ┃      Status: ****************                                         ┃
 # ┃     Version: ****************                                         ┃ print_puppet_info
@@ -127,7 +127,7 @@ function main_menu() {
 # ┃     [1] Install                              [R] Remove               ┃ print_main_menu
 # ┃     [2] Setup                                                         ┃
 # ┃     [3] Update                               [Q] Quit                 ┃ print_main_menu
-# ┃                                                                       ┃ er
+# ┃                                                                       ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ bottom_bar
 # Enter option: ****************
 
@@ -138,7 +138,6 @@ function main_menu() {
     hr-dashed
     er
     print_main_menu
-    er
     bottom_bar
     main_menu_input
 }
