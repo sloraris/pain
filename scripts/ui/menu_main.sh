@@ -122,7 +122,7 @@ function main_menu_input() {
 #=================== MAIN MENU ====================#
 #===================================================#
 function main_menu() {
-    header
+    title
     main_menu_header
     print_puppet_info
     er
