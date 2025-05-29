@@ -36,7 +36,6 @@ function splash_screen() {
             local color="${colors[j]}"
             echo
             top_bar
-            er
             for line in "${logo[@]}"; do
                 echo -e "${WHITE}┃${color}${line}${WHITE}                 ┃${NC}"
             done
@@ -45,7 +44,7 @@ function splash_screen() {
             er
             credits
             bottom_bar
-            echo -en "\033[14A"
+            echo -en "\033[15A"
             sleep 0.1
         done
     done
