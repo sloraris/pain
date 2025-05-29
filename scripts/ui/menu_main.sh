@@ -55,21 +55,21 @@ function print_puppet_info() {
     fi
 
     hostname=$(hostname)
-    hostname=$(printf "%-16s" "${hostname}")
+    hostname=$(printf "%-16s" "${BLUE}${hostname}${WHITE}")
 
     echo -e "${WHITE}┃                   Puppet Info for ${hostname}                    ┃${NC}"
-    echo -e "${WHITE}┃      Status: ${formatted_status}                                  ┃${NC}"
-    echo -e "${WHITE}┃     Version: ${formatted_version}                                  ┃${NC}"
+    echo -e "${WHITE}┃      Status: ${formatted_status}                                         ┃${NC}"
+    echo -e "${WHITE}┃     Version: ${formatted_version}                                         ┃${NC}"
 }
 
 function print_main_menu() {
-    echo -e "${WHITE}┃     ${GREEN}[1] Install                              ${RED}[0] Remove               ┃${NC}"
+    echo -e "${WHITE}┃     ${GREEN}[1] Install                              ${RED}[0] Remove${WHITE}               ┃${NC}"
     echo -e "${WHITE}┃     ${GREEN}[2] Setup${WHITE}                                                         ┃${NC}"
-    echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${BLUE}[Q] Quit                 ┃${NC}"
+    echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${BLACK}[Q] Quit${WHITE}                 ┃${NC}"
 }
 
 function print_prompt() {
-    echo -e "${PURPLE}Enter option: ${NC}"
+    echo -en "${PURPLE}Enter option: ${NC}"
 }
 
 #===================================================#
@@ -125,6 +125,8 @@ function main_menu() {
     title
     main_menu_header
     print_puppet_info
+    er
+    hr-dashed
     er
     print_main_menu
     er
