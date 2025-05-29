@@ -15,19 +15,6 @@
 clear
 set -e
 
-# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃                                                                       ┃
-# ┃                   Puppet Info for ****************                    ┃
-# ┃                                                                       ┃
-# ┃      Status: ****************                                         ┃
-# ┃     Version: ****************                                         ┃
-# ┃                                                                       ┃
-# ┃     [1] Install                              [R] Remove               ┃
-# ┃     [2] Setup                                                         ┃
-# ┃     [3] Update                               [Q] Quit                 ┃
-# ┃                                                                       ┃
-# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-
 #===================================================#
 #================== MENU UI COMPONENTS =============#
 #===================================================#
@@ -45,25 +32,26 @@ function print_puppet_info() {
     # Format the status string with proper padding before adding color
     if [[ "${status}" == "Not installed" ]]; then
         status=$(printf "%-16s" "Not installed")
-        formatted_status="${RED}${status}${NC}"
+        formatted_status="${RED}${status}${WHITE}"
     else
         status=$(printf "%-16s" "${status}")
-        formatted_status="${GREEN}${status}${NC}"
+        formatted_status="${GREEN}${status}${WHITE}"
     fi
 
     # Format the version string with proper padding before adding color
     if [[ "${version}" == "N/A" ]]; then
         version=$(printf "%-16s" "N/A")
-        formatted_version="${RED}${version}${NC}"
+        formatted_version="${RED}${version}${WHITE}"
     else
         version=$(printf "%-16s" "${version}")
-        formatted_version="${GREEN}${version}${NC}"
+        formatted_version="${GREEN}${version}${WHITE}"
     fi
 
     hostname=$(hostname)
-    hostname=$(printf "%-16s" "${BLUE}${hostname}${WHITE}")
+    hostname=$(printf "%-16s" "${hostname}")
+    hostname="${BLUE}${hostname}${WHITE}"
 
-    echo -e "${WHITE}┃                   Puppet Info for ${hostname}                    ┃${NC}"
+    echo -e "${WHITE}┃        Host: ${hostname}                                         ┃${NC}"
     echo -e "${WHITE}┃      Status: ${formatted_status}                                         ┃${NC}"
     echo -e "${WHITE}┃     Version: ${formatted_version}                                         ┃${NC}"
 }
@@ -102,8 +90,6 @@ function get_puppet_info() {
         version="N/A"
     fi
 
-    status=$(printf "%-16s" "${status}")
-    version=$(printf "%-16s" "${version}")
     echo "${status}|${version}"
 }
 
@@ -119,6 +105,7 @@ function main_menu_input() {
         *)
             echo -e "${CURSOR_UP}${CLEAR_LINE}${RED}Invalid option${NC}"
             sleep 1
+            echo -e "${CURSOR_UP}${CLEAR_LINE}"
             main_menu_input
             ;;
     esac
@@ -128,6 +115,22 @@ function main_menu_input() {
 #=================== MAIN MENU ====================#
 #===================================================#
 function main_menu() {
+
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ main_menu_header
+# ┃                                                                       ┃ er
+# ┃        Host: ****************                                         ┃ print_puppet_info
+# ┃      Status: ****************                                         ┃
+# ┃     Version: ****************                                         ┃ print_puppet_info
+# ┃                                                                       ┃
+# ┃    ═══════════════════════════════════════════════════════════════    ┃ hr-dashed
+# ┃                                                                       ┃
+# ┃     [1] Install                              [R] Remove               ┃ print_main_menu
+# ┃     [2] Setup                                                         ┃
+# ┃     [3] Update                               [Q] Quit                 ┃ print_main_menu
+# ┃                                                                       ┃ er
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ bottom_bar
+# Enter option: ****************
+
     title
     main_menu_header
     print_puppet_info

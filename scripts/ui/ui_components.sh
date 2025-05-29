@@ -84,5 +84,5 @@ function title() {
     er
     credits
     version
-    echo
+    echo -e
 }
