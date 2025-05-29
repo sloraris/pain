@@ -37,20 +37,26 @@ function main_menu_header() {
 }
 
 function print_puppet_info() {
-    local puppet_info status version formatted_status formatted_version hostname
+    local puppet_info status version hostname
     puppet_info=$(get_puppet_info)
     status=$(echo "${puppet_info}" | cut -d'|' -f1)
     version=$(echo "${puppet_info}" | cut -d'|' -f2)
 
+    # Format the status string with proper padding before adding color
     if [[ "${status}" == "Not installed" ]]; then
+        status=$(printf "%-16s" "Not installed")
         formatted_status="${RED}${status}${NC}"
     else
+        status=$(printf "%-16s" "${status}")
         formatted_status="${GREEN}${status}${NC}"
     fi
 
+    # Format the version string with proper padding before adding color
     if [[ "${version}" == "N/A" ]]; then
+        version=$(printf "%-16s" "N/A")
         formatted_version="${RED}${version}${NC}"
     else
+        version=$(printf "%-16s" "${version}")
         formatted_version="${GREEN}${version}${NC}"
     fi
 
