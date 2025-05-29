@@ -22,10 +22,12 @@ set -e
 #===================================================#
 function top_bar() {
     echo -e "${WHITE}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓${NC}"
+    er
 }
 
 function bottom_bar() {
     echo -e "${WHITE}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${NC}"
+    er
 }
 
 function hr() {
@@ -59,12 +61,12 @@ function credits() {
 }
 
 function version() {
-    echo -e "${WHITE}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ ${BLACK}${PAIN_VERSION_FORMATTED}${WHITE} ┣━━┛${NC}"
+    echo -e "${WHITE}┃                             ${BLACK}${PAIN_VERSION_FORMATTED}${WHITE}                            ┃${NC}"
 }
 
 function title() {
     # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ # top_bar
-    # ┃                                                                       ┃ # er
+    # ┃                                                                       ┃ #
     # ┃                ██████╗     █████╗    ██╗   ███╗   ██╗                 ┃ # logo
     # ┃                ██╔══██╗   ██╔══██╗   ██║   ████╗  ██║                 ┃ #
     # ┃                ██████╔╝   ███████║   ██║   ██╔██╗ ██║                 ┃ #
@@ -72,15 +74,15 @@ function title() {
     # ┃                ██║        ██║  ██║   ██║   ██║ ╚████║                 ┃ #
     # ┃                ╚═╝        ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝                 ┃ #
     # ┃                Puppet Assisted Installation Navigator                 ┃ # logo
-    # ┃                                                                       ┃ # er
+    # ┃                             v*************                            ┃ # version
     # ┃                           a tool by sloraris                          ┃ # credits
-    # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ v************* ┣━━┛ # version
+    # ┃                                                                       ┃ #
+    # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ # bottom_bar
 
     top_bar
-    er
     logo
-    er
-    credits
     version
-    echo -e
+    credits
+    bottom_bar
+    echo -e "${CLEAR_LINE}"
 }
