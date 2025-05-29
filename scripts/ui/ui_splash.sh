@@ -14,6 +14,9 @@
 
 set -e
 
+# hide cursor
+tput civis
+
 function splash_screen() {
     local colors=("\033[1;31m" "\033[1;33m" "\033[1;32m" "\033[1;36m" "\033[1;34m" "\033[1;35m")
     local logo=(
@@ -49,4 +52,7 @@ function splash_screen() {
 
     sleep 0.5
     clear
+
+    # show cursor
+    tput cnorm
 }
