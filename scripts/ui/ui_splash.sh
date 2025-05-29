@@ -51,7 +51,6 @@ function splash_screen() {
     done
 
     sleep 0.5
-    clear
 
     # show cursor
     tput cnorm
