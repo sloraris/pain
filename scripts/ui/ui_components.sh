@@ -55,13 +55,11 @@ function logo() {
 }
 
 function credits() {
-
     echo -e  "${WHITE}┃                           ${PURPLE}a tool by sloraris${WHITE}                          ┃${NC}"
 }
 
 function version() {
-
-    echo -e "${WHITE}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ ${CYAN}${PAIN_VERSION_FORMATTED}${WHITE} ┣━━┛${NC}"
+    echo -e "${WHITE}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ ${BLACK}${PAIN_VERSION_FORMATTED}${WHITE} ┣━━┛${NC}"
 }
 
 function title() {
