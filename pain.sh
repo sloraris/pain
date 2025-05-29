@@ -33,13 +33,13 @@ function update_pain() {
   # Check if we're on the default branch
   local current_branch
   current_branch=$(git branch --show-current)
-  if [[ "${current_branch}" != "master" ]]; then
-    status_msg "Cannot update: You are on branch '${current_branch}' instead of 'master'"
+  if [[ "${current_branch}" != "main" ]]; then
+    status_msg "Cannot update: You are on branch '${current_branch}' instead of 'main'"
     return 1
   fi
 
   # Quietly pull updates (only occurs if on default branch)
-  if git pull -q origin master; then
+  if git pull -q origin main; then
     ok_msg "PAIN updated successfully. Please relaunch."
     exit 0
   else
@@ -77,9 +77,12 @@ function get_pain_version() {
   fi
 }
 
+#===================================================#
+#=================== MAIN SCRIPT ===================#
+#===================================================#
 # check_if_ratos
 # check_euid
 # init_logfile
 get_pain_version
-header
+splash_screen
 main_menu

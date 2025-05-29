@@ -12,6 +12,9 @@
 # ┃ This file may be distributed under the terms of the GNU GPLv3 license ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
+# ┻ ┳ ┗ ┛ ┏ ┓ ┫ ╋ ┣ ━ █
+# ╩ ╦ ╚ ╝ ╔ ╗ ╣ ╬ ╠ ═
+
 set -e
 
 #===================================================#
@@ -54,7 +57,7 @@ function credits() {
 
 function version() {
 
-    echo -e "${WHITE}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃ ${CYAN}${PAIN_VERSION_FORMATTED}${WHITE} ┃━━┛${NC}"
+    echo -e "${WHITE}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ ${CYAN}${PAIN_VERSION_FORMATTED}${WHITE} ┣━━┛${NC}"
 }
 
 function title() {
@@ -69,7 +72,7 @@ function title() {
     # ┃                Puppet Assisted Installation Navigator                 ┃ # logo
     # ┃                                                                       ┃ # er
     # ┃                           a tool by sloraris                          ┃ # credits
-    # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃ v************* ┃━━┛ # version
+    # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫ v************* ┣━━┛ # version
 
     top_bar
     er

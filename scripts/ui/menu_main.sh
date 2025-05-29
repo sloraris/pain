@@ -11,6 +11,10 @@
 # ┃                                                                       ┃
 # ┃ This file may be distributed under the terms of the GNU GPLv3 license ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+clear
+set -e
+
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 # ┃                                                                       ┃
 # ┃                   Puppet Info for ****************                    ┃
@@ -18,14 +22,59 @@
 # ┃      Status: ****************                                         ┃
 # ┃     Version: ****************                                         ┃
 # ┃                                                                       ┃
+# ┃     [1] Install                              [R] Remove               ┃
+# ┃     [2] Setup                                                         ┃
+# ┃     [3] Update                               [Q] Quit                 ┃
+# ┃                                                                       ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-set -e
-
+#===================================================#
+#================== MENU UI COMPONENTS =============#
+#===================================================#
 function main_menu_header() {
     echo -e "${WHITE}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ${PURPLE}MAIN MENU${WHITE} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓${NC}"
+    er
 }
 
+function print_puppet_info() {
+    local puppet_info status version formatted_status formatted_version hostname
+    puppet_info=$(get_puppet_info)
+    status=$(echo "${puppet_info}" | cut -d'|' -f1)
+    version=$(echo "${puppet_info}" | cut -d'|' -f2)
+
+    if [[ "${status}" == "Not installed" ]]; then
+        formatted_status="${RED}${status}${NC}"
+    else
+        formatted_status="${GREEN}${status}${NC}"
+    fi
+
+    if [[ "${version}" == "N/A" ]]; then
+        formatted_version="${RED}${version}${NC}"
+    else
+        formatted_version="${GREEN}${version}${NC}"
+    fi
+
+    hostname=$(hostname)
+    hostname=$(printf "%-16s" "${hostname}")
+
+    echo -e "${WHITE}┃                   Puppet Info for ${hostname}                    ┃${NC}"
+    echo -e "${WHITE}┃      Status: ${formatted_status}                                  ┃${NC}"
+    echo -e "${WHITE}┃     Version: ${formatted_version}                                  ┃${NC}"
+}
+
+function print_main_menu() {
+    echo -e "${WHITE}┃     ${GREEN}[1] Install                              ${RED}[0] Remove               ┃${NC}"
+    echo -e "${WHITE}┃     ${GREEN}[2] Setup${WHITE}                                                         ┃${NC}"
+    echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${BLUE}[Q] Quit                 ┃${NC}"
+}
+
+function print_prompt() {
+    echo -e "${PURPLE}Enter option: ${NC}"
+}
+
+#===================================================#
+#=================== MENU LOGIC ====================#
+#===================================================#
 function get_puppet_info() {
     local has_server has_agent status version
     has_server=$(dpkg -l | grep -q puppet-server && echo true || echo false)
@@ -52,19 +101,33 @@ function get_puppet_info() {
     echo "${status}|${version}"
 }
 
-function print_puppet_info() {
-    local puppet_info status version
-    puppet_info=$(get_puppet_info)
-    status=$(echo "${puppet_info}" | cut -d'|' -f1)
-    version=$(echo "${puppet_info}" | cut -d'|' -f2)
-
-    echo -e "${WHITE}┃      Status: ${PURPLE}${status}${WHITE}                                  ┃${NC}"
-    echo -e "${WHITE}┃     Version: ${PURPLE}${version}${WHITE}                                  ┃${NC}"
+function main_menu_input() {
+    print_prompt
+    read -r main_menu_option
+    case "${main_menu_option}" in
+        1) install_menu ;;
+        2) setup_menu ;;
+        3) update_menu ;;
+        R|r) remove_menu ;;
+        Q|q) exit 0 ;;
+        *)
+            echo -e "${CURSOR_UP}${CLEAR_LINE}${RED}Invalid option${NC}"
+            sleep 1
+            main_menu_input
+            ;;
+    esac
 }
 
+#===================================================#
+#=================== MAIN MENU ====================#
+#===================================================#
 function main_menu() {
     header
     main_menu_header
-    print_pain_version
     print_puppet_info
+    er
+    print_main_menu
+    er
+    bottom_bar
+    main_menu_input
 }
