@@ -145,9 +145,9 @@ function set_pain_version() {
       # Get the most recent tag directly
       version=$(git describe --tags --abbrev=0 2>/dev/null)
 
-      # Ensure version doesn't exceed 14 chars (16 minus 2 for padding)
-      if [[ ${#version} -gt 14 ]]; then
-        version="${version:0:14}"
+      # Ensure version doesn't exceed 16 chars
+      if [[ ${#version} -gt 16 ]]; then
+        version="${version:0:16}"
       fi
     fi
   fi
@@ -160,8 +160,8 @@ function set_pain_version() {
     PAIN_VERSION_FORMATTED="${version}"
   else
     # Calculate padding for centering (16 is the target width)
-    padding_left=$(( (14 - ${#version}) / 2 ))
-    padding_right=$(( 14 - ${#version} - padding_left ))
+    padding_left=$(( (16 - ${#version}) / 2 ))
+    padding_right=$(( 16 - ${#version} - padding_left ))
 
     # Create the padding strings
     padding_left=$(printf "%${padding_left}s" "")
