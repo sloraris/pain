@@ -177,18 +177,22 @@ function get_puppet_info() {
 }
 
 function main_menu_input() {
+    local prompt="Enter option: "
     while true; do
-        read -p "Enter option: " main_menu_option
+        # Move cursor to start of line and clear it
+        echo -en "\r${CLEAR_LINE}${prompt}"
+        # Read a single character without requiring Enter
+        read -n 1 main_menu_option
         case "${main_menu_option}" in
             1) install_menu; break;;
             2) setup_menu; break;;
             3) update_menu; break;;
-            R|r) remove_menu; break;;
-            Q|q) exit 0; break;;
+            [Rr]) remove_menu; break;;
+            [Qq]) exit 0;;
             *)
-                echo -e "${CURSOR_UP}${CLEAR_LINE}${RED}Invalid option${NC}"
+                # Show error briefly without creating new lines
+                echo -en "\r${CLEAR_LINE}${RED}Invalid option${NC}"
                 sleep 1
-                echo -e "${CURSOR_UP}${CLEAR_LINE}${CURSOR_UP}"
                 ;;
         esac
     done
