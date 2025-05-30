@@ -165,6 +165,38 @@ function get_pain_version() {
   fi
 }
 
+function prompt_update() {
+  local current_ver="$1"
+  local latest_ver="$2"
+
+  status_msg "Current version: ${current_ver}"
+  status_msg "Latest version:  ${latest_ver}"
+  echo
+  read -p "Would you like to update PAIN? [y/N] " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    update_pain
+  fi
+}
+
+function pain_update_check() {
+  # Get current version (without padding)
+  local current_ver
+  current_ver=$(cd "${PAIN_DIR}" && git describe --tags --abbrev=0 2>/dev/null | cut -d "-" -f 1,2)
+
+  # Fetch updates quietly
+  git -C "${PAIN_DIR}" fetch -q origin main 2>/dev/null
+
+  # Get latest version from remote
+  local latest_ver
+  latest_ver=$(git -C "${PAIN_DIR}" ls-remote --tags --sort=-v:refname origin | head -n1 | cut -d'/' -f3 | cut -d "-" -f 1,2)
+
+  # If versions are different and latest is not empty, prompt for update
+  if [[ -n "${latest_ver}" && "${current_ver}" != "${latest_ver}" ]]; then
+    prompt_update "${current_ver}" "${latest_ver}"
+  fi
+}
+
 #===================================================#
 #=================== MAIN SCRIPT ===================#
 #===================================================#
@@ -180,6 +212,7 @@ ensure_sudo
 # Continue with the rest of initialization
 check_latest_versions
 get_pain_version
+pain_update_check
 
 # Enter main menu
 clear -x
