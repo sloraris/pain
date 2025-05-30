@@ -34,29 +34,24 @@ function check_euid() {
 }
 
 function ensure_sudo() {
-    # First check if we have sudo privileges without a password
-    if sudo -n true 2>/dev/null; then
-        info_msg "Sudo credentials cached, proceeding..."
-        return 0
-    fi
+    warning_msg "This script requires sudo privileges to continue."
 
-    # If we don't have cached credentials, try to get them
-    info_msg "This script requires sudo privileges to continue."
-    info_msg "Please enter your password when prompted."
+    # Clear any existing sudo tokens/cached credentials
+    sudo -k
 
-    # Try to get sudo privileges
+    # Request sudo credentials
     if ! sudo -v; then
         error_msg "Failed to obtain sudo privileges." >&2
         exit 1
     fi
 
-    # Verify we actually got sudo access
-    if ! sudo -n true; then
+    # Verify we actually got sudo access with a real test
+    if ! sudo test -w /etc/sudoers.d/; then
         error_msg "Failed to verify sudo access after password entry." >&2
         exit 1
     fi
 
-    info_msg "Successfully obtained sudo privileges."
+    success_msg "Sudo access verified."
 
     # Keep sudo alive in the background
     (while true; do
@@ -172,7 +167,6 @@ check_euid
 
 # Show splash screen first so user sees what they're running
 splash_screen
-clear -x
 
 # Ensure sudo access
 ensure_sudo
