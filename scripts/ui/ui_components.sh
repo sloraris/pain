@@ -61,7 +61,8 @@ function credits() {
 }
 
 function version() {
-    echo -e "${WHITE}┃                               ${PAIN_VERSION_FORMATTED}                              ┃${NC}"
+    # left padding should be less than right due to floor division (padding will justify to the left on uneven numbers)
+    echo -e "${WHITE}┃                           ${PAIN_VERSION_FORMATTED}                            ┃${NC}"
 }
 
 function title() {

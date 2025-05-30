@@ -45,7 +45,7 @@ function check_pain_update() {
   # If no new version is available, notify and continue
   if [[ "${PAIN_VERSION}" == "${latest_ver}" ]]; then
     status_msg "You are running the latest version of PAIN."
-    PAIN_VERSION_FORMATTED="${GREEN}${PAIN_VERSION}${NC}"
+    PAIN_VERSION_FORMATTED="${GREEN}${PAIN_VERSION_FORMATTED}${NC}"
   fi
 }
 
@@ -64,7 +64,7 @@ function pain_update_prompt() {
   else
     echo
     warning_msg "PAIN will not be updated."
-    PAIN_VERSION_FORMATTED="${YELLOW}${PAIN_VERSION}${NC}"
+    PAIN_VERSION_FORMATTED="${YELLOW}${PAIN_VERSION_FORMATTED}${NC}"
   fi
 }
 
