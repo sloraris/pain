@@ -85,11 +85,11 @@ function update_pain() {
   if git pull -q origin main; then
     success_msg "PAIN updated successfully. Relaunching..."
     sleep 1  # Give user a chance to see the message
-    # Get the absolute path of the script
-    local script_path
-    script_path=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")
+    # Get the absolute path of the main script
+    local main_script
+    main_script="${PAIN_DIR}/pain.sh"
     cd "${PAIN_DIR}" || exit 1
-    exec "${script_path}" "$@"
+    exec "${main_script}" "$@"
   else
     error_msg "Failed to update PAIN."
     return 1
