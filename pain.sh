@@ -177,9 +177,7 @@ function pain_update_prompt() {
   info_msg "There is a new version of PAIN available."
   info_msg "Current version: ${current_ver}"
   info_msg "Latest version:  ${latest_ver}"
-  echo
   read -p "Would you like to update PAIN? [y/N] " -n 1 -r
-  echo
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     update_pain
