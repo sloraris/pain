@@ -66,10 +66,10 @@ function ensure_sudo() {
 }
 
 #===================================================#
-#================= VERSION CHECKING ================#
+#================= PACKAGE CHECKING ================#
 #===================================================#
 
-function check_latest_versions() {
+function check_package_versions() {
     # Try to update apt cache, but handle errors
     if ! sudo apt-get update -qq 2>/dev/null; then
         warning_msg "Failed to update apt cache. Version checks may be inaccurate." >&2
@@ -109,6 +109,60 @@ function check_latest_versions() {
 #=================== UPDATE PAIN ===================#
 #===================================================#
 
+function set_pain_version() {
+  local version="unknown"
+
+  if [[ -d "${PAIN_DIR}/.git" ]]; then
+    cd "${PAIN_DIR}" || return
+
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+      # Get the tag and extract just the version part (v0.0.0-dev)
+      version=$(git describe --always --tags 2>/dev/null | cut -d "-" -f 1,2)
+
+      # Ensure version doesn't exceed 14 chars (16 minus 2 for padding)
+      if [[ ${#version} -gt 14 ]]; then
+        version="${version:0:14}"
+      fi
+    fi
+  fi
+
+  # Export the raw version for other functions to use
+  PAIN_VERSION="${version}"
+
+  # If version is already 16 chars, use it as-is
+  if [[ ${#version} -eq 16 ]]; then
+    PAIN_VERSION_FORMATTED="${version}"
+  else
+    # Calculate padding for centering (16 is the target width)
+    padding_left=$(( (14 - ${#version}) / 2 ))
+    padding_right=$(( 14 - ${#version} - padding_left ))
+
+    # Create the padding strings
+    padding_left=$(printf "%${padding_left}s" "")
+    padding_right=$(printf "%${padding_right}s" "")
+
+    # Set the global formatted version
+    PAIN_VERSION_FORMATTED="${padding_left}${version}${padding_right}"
+  fi
+}
+
+function check_pain_update() {
+  # Set the current version first
+  set_pain_version
+
+  # Fetch updates quietly
+  git -C "${PAIN_DIR}" fetch -q origin main 2>/dev/null
+
+  # Get latest version from remote
+  local latest_ver
+  latest_ver=$(git -C "${PAIN_DIR}" ls-remote --tags --sort=-v:refname origin | head -n1 | cut -d'/' -f3 | cut -d "-" -f 1,2)
+
+  # If versions are different and latest is not empty, prompt for update
+  if [[ -n "${latest_ver}" && "${PAIN_VERSION}" != "${latest_ver}" ]]; then
+    pain_update_prompt "${PAIN_VERSION}" "${latest_ver}"
+  fi
+}
+
 function update_pain() {
   cd "${PAIN_DIR}" || return
 
@@ -130,42 +184,7 @@ function update_pain() {
   fi
 }
 
-function get_pain_version() {
-  local version padding_left padding_right
-  version="unknown"
-
-  if [[ -d "${PAIN_DIR}/.git" ]]; then
-    cd "${PAIN_DIR}" || return
-
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-      # Get the tag and extract just the version part (v0.0.0-dev)
-      version=$(git describe --always --tags 2>/dev/null | cut -d "-" -f 1,2)
-
-      # Ensure version doesn't exceed 14 chars (16 minus 2 for padding)
-      if [[ ${#version} -gt 14 ]]; then
-        version="${version:0:14}"
-      fi
-    fi
-  fi
-
-  # If version is already 16 chars, use it as-is
-  if [[ ${#version} -eq 16 ]]; then
-    PAIN_VERSION_FORMATTED="${version}"
-  else
-    # Calculate padding for centering (16 is the target width)
-    padding_left=$(( (14 - ${#version}) / 2 ))
-    padding_right=$(( 14 - ${#version} - padding_left ))
-
-    # Create the padding strings
-    padding_left=$(printf "%${padding_left}s" "")
-    padding_right=$(printf "%${padding_right}s" "")
-
-    # Set the global formatted version
-    PAIN_VERSION_FORMATTED="${padding_left}${version}${padding_right}"
-  fi
-}
-
-function prompt_update() {
+function pain_update_prompt() {
   local current_ver="$1"
   local latest_ver="$2"
 
@@ -179,23 +198,6 @@ function prompt_update() {
   fi
 }
 
-function pain_update_check() {
-  # Get current version (without padding)
-  local current_ver
-  current_ver=$(cd "${PAIN_DIR}" && git describe --tags --abbrev=0 2>/dev/null | cut -d "-" -f 1,2)
-
-  # Fetch updates quietly
-  git -C "${PAIN_DIR}" fetch -q origin main 2>/dev/null
-
-  # Get latest version from remote
-  local latest_ver
-  latest_ver=$(git -C "${PAIN_DIR}" ls-remote --tags --sort=-v:refname origin | head -n1 | cut -d'/' -f3 | cut -d "-" -f 1,2)
-
-  # If versions are different and latest is not empty, prompt for update
-  if [[ -n "${latest_ver}" && "${current_ver}" != "${latest_ver}" ]]; then
-    prompt_update "${current_ver}" "${latest_ver}"
-  fi
-}
 
 #===================================================#
 #=================== MAIN SCRIPT ===================#
@@ -206,13 +208,14 @@ check_euid
 # Show splash screen first so user sees what they're running
 splash_screen
 
+# Check for updates (this will also set the version)
+check_pain_update
+
 # Ensure sudo access
 ensure_sudo
 
 # Continue with the rest of initialization
-check_latest_versions
-get_pain_version
-pain_update_check
+check_package_versions
 
 # Enter main menu
 clear -x
