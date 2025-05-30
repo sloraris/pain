@@ -134,8 +134,8 @@ function get_pain_version() {
   local version padding_left padding_right
   version="unknown"
 
-  if [[ -d "${REPO_PATH}/.git" ]]; then
-    cd "${REPO_PATH}" || return
+  if [[ -d "${PAIN_DIR}/.git" ]]; then
+    cd "${PAIN_DIR}" || return
 
     if git rev-parse --git-dir > /dev/null 2>&1; then
       version=$(git describe --always --tags 2>/dev/null)
