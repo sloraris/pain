@@ -18,17 +18,17 @@ set -e
 #================= SCRIPT MESSAGES =================#
 #===================================================#
 function error_msg() {
-    echo -e "${RED}Error: ${1}${NC}"
+    echo -e "${RED}❌ ${1}${NC}"
 }
 
 function warning_msg() {
-    echo -e "${YELLOW}Warning: ${1}${NC}"
+    echo -e "${YELLOW}❗ ${1}${NC}"
 }
 
 function success_msg() {
-    echo -e "${GREEN}Success: ${1}${NC}"
+    echo -e "${GREEN}✔ ${1}${NC}"
 }
 
 function info_msg() {
-    echo -e "${CYAN}Info: ${1}${NC}"
+    echo -e "${CYAN}ℹ ${1}${NC}"
 }
