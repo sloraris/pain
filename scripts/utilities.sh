@@ -22,7 +22,7 @@ function error_msg() {
 }
 
 function warning_msg() {
-    echo -e "${YELLOW}❗ ${1}${NC}"
+    echo -e "${YELLOW}⚠ ${1}${NC}"
 }
 
 function success_msg() {
