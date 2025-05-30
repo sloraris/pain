@@ -52,6 +52,6 @@ function splash_screen() {
     sleep 0.5
 
     # show cursor and send to bottom of screen
-    tput cup $(tput lines) 0
+    echo -en "\033[15B"
     tput cnorm
 }
