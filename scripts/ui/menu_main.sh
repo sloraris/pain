@@ -178,7 +178,7 @@ function main_menu_input() {
         # Move cursor to start of line and clear it
         echo -en "\r${CLEAR_LINE}${prompt}"
         # Read a single character without requiring Enter
-        read -n 1 main_menu_option
+        read -n 1 -t 1 main_menu_option
         case "${main_menu_option}" in
             1) install_menu; break;;
             2) setup_menu; break;;
@@ -186,9 +186,11 @@ function main_menu_input() {
             [Rr]) remove_menu; break;;
             [Qq]) exit 0;;
             *)
+                # Clear input buffer
+                read -t 0.1 -n 100 discard
                 # Show error briefly without creating new lines
                 echo -en "\r${CLEAR_LINE}${RED}Invalid option${NC}"
-                sleep 1
+                sleep 0.5
                 ;;
         esac
     done
