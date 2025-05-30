@@ -20,6 +20,24 @@ set -e
 #===================================================#
 #================== FRAMEWORK PARTS ================#
 #===================================================#
+function menu_header() {
+    local menu_name="$1"
+    local total_width=71  # Total width of the header line without the corners
+    local name_length=${#menu_name}
+    local padding_each_side=$(( (total_width - name_length - 2) / 2 ))  # -2 for the spaces around menu name
+
+    local left_padding=$(printf '%*s' "$padding_each_side" '' | sed 's/ /━/g')
+    local right_padding=$(printf '%*s' "$padding_each_side" '' | sed 's/ /━/g')
+
+    # Add an extra ━ to the right side if the name length plus padding is odd
+    if (( (name_length + 2 + padding_each_side * 2) < total_width )); then
+        right_padding+="━"
+    fi
+
+    echo -e "${WHITE}┏${left_padding} ${PURPLE}${menu_name}${WHITE} ${right_padding}┓${NC}"
+    er
+}
+
 function top_bar() {
     echo -e "${WHITE}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓${NC}"
     er

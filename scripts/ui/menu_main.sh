@@ -18,10 +18,6 @@ clear -x
 #===================================================#
 #================== MENU UI COMPONENTS =============#
 #===================================================#
-function main_menu_header() {
-    echo -e "${WHITE}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ${PURPLE}MAIN MENU${WHITE} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓${NC}"
-    er
-}
 
 function print_puppet_info() {
     local puppet_info status version version_status hostname
@@ -203,7 +199,7 @@ function main_menu_input() {
 #===================================================#
 function main_menu() {
 
-# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ main_menu_header
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ menu_header
 # ┃                                                                       ┃
 # ┃        Host: ****************                                         ┃ print_puppet_info
 # ┃      Status: ****************                                         ┃
@@ -219,7 +215,7 @@ function main_menu() {
 # Enter option: ****************
 
     title
-    main_menu_header
+    menu_header "MAIN MENU"
     print_puppet_info
     er
     hr-dashed
