@@ -40,7 +40,7 @@ function print_puppet_info() {
     fi
 
     # Format the version string with proper padding before adding color
-    if [[ "${status}" == "Both installed" ]]; then
+    if [[ "${status}" == "Server/Agent" ]]; then
         # Split version and status for server and agent
         server_ver=$(echo "${version}" | cut -d'|' -f1)
         agent_ver=$(echo "${version}" | cut -d'|' -f2)
@@ -123,7 +123,7 @@ function get_puppet_info() {
     has_agent=$(dpkg -l | grep -q puppet-agent && echo true || echo false)
 
     if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then
-        status="Both installed"
+        status="Server/Agent"
         server_ver=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
         agent_ver=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
 
