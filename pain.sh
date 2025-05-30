@@ -28,16 +28,39 @@ for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 #===================================================#
 
 function check_latest_versions() {
-    # Update apt cache quietly
-    apt-get update -qq 2>/dev/null
+    # Try to update apt cache, but handle errors
+    if ! apt-get update -qq 2>/dev/null; then
+        echo "Warning: Failed to update apt cache. Version checks may be inaccurate." >&2
+        # Set fallback values
+        LATEST_SERVER_VER="unknown"
+        LATEST_AGENT_VER="unknown"
+        export LATEST_SERVER_VER LATEST_AGENT_VER
+        return 1
+    fi
 
-    # Get latest available versions
-    LATEST_SERVER_VER=$(apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "N/A")
-    LATEST_AGENT_VER=$(apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "N/A")
+    # Get latest available versions with error checking
+    LATEST_SERVER_VER=$(apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
+    if [[ -z "${LATEST_SERVER_VER}" ]]; then
+        LATEST_SERVER_VER="unknown"
+        echo "Warning: Could not determine latest Puppet Server version" >&2
+    fi
+
+    LATEST_AGENT_VER=$(apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
+    if [[ -z "${LATEST_AGENT_VER}" ]]; then
+        LATEST_AGENT_VER="unknown"
+        echo "Warning: Could not determine latest Puppet Agent version" >&2
+    fi
 
     # Export these for use in other scripts
     export LATEST_SERVER_VER
     export LATEST_AGENT_VER
+
+    # Return success only if we got both versions
+    if [[ "${LATEST_SERVER_VER}" != "unknown" && "${LATEST_AGENT_VER}" != "unknown" ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 #===================================================#

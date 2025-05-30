@@ -49,19 +49,31 @@ function print_puppet_info() {
 
         # Format server version
         server_ver=$(printf "%-8s" "${server_ver}")
-        if [[ "${server_status}" == "current" ]]; then
-            formatted_server="${GREEN}${server_ver}${WHITE}"
-        else
-            formatted_server="${RED}${server_ver}${WHITE}"
-        fi
+        case "${server_status}" in
+            "current")
+                formatted_server="${GREEN}${server_ver}${WHITE}"
+                ;;
+            "outdated")
+                formatted_server="${RED}${server_ver}${WHITE}"
+                ;;
+            "unknown")
+                formatted_server="${YELLOW}${server_ver}${WHITE}"
+                ;;
+        esac
 
         # Format agent version
         agent_ver=$(printf "%-8s" "${agent_ver}")
-        if [[ "${agent_status}" == "current" ]]; then
-            formatted_agent="${GREEN}${agent_ver}${WHITE}"
-        else
-            formatted_agent="${RED}${agent_ver}${WHITE}"
-        fi
+        case "${agent_status}" in
+            "current")
+                formatted_agent="${GREEN}${agent_ver}${WHITE}"
+                ;;
+            "outdated")
+                formatted_agent="${RED}${agent_ver}${WHITE}"
+                ;;
+            "unknown")
+                formatted_agent="${YELLOW}${agent_ver}${WHITE}"
+                ;;
+        esac
 
         formatted_version="${formatted_server}/${formatted_agent}"
     else
@@ -72,6 +84,9 @@ function print_puppet_info() {
                 ;;
             "outdated")
                 formatted_version="${RED}${version}${WHITE}"
+                ;;
+            "unknown")
+                formatted_version="${YELLOW}${version}${WHITE}"
                 ;;
             "none")
                 formatted_version="${RED}${version}${WHITE}"
@@ -113,14 +128,18 @@ function get_puppet_info() {
         agent_ver=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
 
         # Check server version status
-        if [[ "${server_ver}" == "${LATEST_SERVER_VER}" ]]; then
+        if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
+            server_status="unknown"
+        elif [[ "${server_ver}" == "${LATEST_SERVER_VER}" ]]; then
             server_status="current"
         else
             server_status="outdated"
         fi
 
         # Check agent version status
-        if [[ "${agent_ver}" == "${LATEST_AGENT_VER}" ]]; then
+        if [[ "${LATEST_AGENT_VER}" == "unknown" ]]; then
+            agent_status="unknown"
+        elif [[ "${agent_ver}" == "${LATEST_AGENT_VER}" ]]; then
             agent_status="current"
         else
             agent_status="outdated"
@@ -133,7 +152,9 @@ function get_puppet_info() {
         server_ver=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
         version="${server_ver}"
 
-        if [[ "${server_ver}" == "${LATEST_SERVER_VER}" ]]; then
+        if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
+            version_status="unknown"
+        elif [[ "${server_ver}" == "${LATEST_SERVER_VER}" ]]; then
             version_status="current"
         else
             version_status="outdated"
@@ -143,7 +164,9 @@ function get_puppet_info() {
         agent_ver=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
         version="${agent_ver}"
 
-        if [[ "${agent_ver}" == "${LATEST_AGENT_VER}" ]]; then
+        if [[ "${LATEST_AGENT_VER}" == "unknown" ]]; then
+            version_status="unknown"
+        elif [[ "${agent_ver}" == "${LATEST_AGENT_VER}" ]]; then
             version_status="current"
         else
             version_status="outdated"
