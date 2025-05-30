@@ -155,9 +155,9 @@ function check_pain_update() {
   # Fetch updates quietly
   git -C "${PAIN_DIR}" fetch -q origin main 2>/dev/null
 
-  # Get latest version from remote, filtering out tag references
+  # Get latest version from remote, using only direct tag references
   local latest_ver
-  latest_ver=$(git -C "${PAIN_DIR}" ls-remote --tags --sort=-v:refname origin | grep -v "{}$" | head -n1 | cut -d'/' -f3 | cut -d "-" -f 1,2)
+  latest_ver=$(git -C "${PAIN_DIR}" ls-remote --refs --tags origin | sort -V | tail -n1 | cut -d'/' -f3 | cut -d "-" -f 1,2)
 
   # If versions are different and latest is not empty, prompt for update
   if [[ -n "${latest_ver}" && "${PAIN_VERSION}" != "${latest_ver}" ]]; then
