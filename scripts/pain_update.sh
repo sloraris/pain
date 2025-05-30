@@ -63,7 +63,7 @@ function pain_update_prompt() {
     update_pain
   else
     echo
-    warning_msg "PAIN will not be updated."
+    warning_msg "PAIN will not be updated. You may be missing out on new features and bug fixes."
     PAIN_VERSION_FORMATTED="${YELLOW}${PAIN_VERSION_FORMATTED}${NC}"
   fi
 }
@@ -81,9 +81,29 @@ function update_pain() {
     return 1
   fi
 
+  # Fetch all updates including tags
+  if ! git fetch --tags origin main; then
+    error_msg "Failed to fetch updates."
+    return 1
+  fi
+
   # Quietly pull updates (only occurs if on default branch)
   if git pull -q origin main; then
-    success_msg "PAIN updated successfully. Relaunching..."
+  # Get the latest matching tag type (dev or release)
+    local new_tag
+    if [[ "${PAIN_VERSION}" == *"-dev"* ]]; then
+      new_tag=$(git tag -l | grep -- "-dev$" | sort -V | tail -n1)
+    else
+      new_tag=$(git tag -l | grep -v -- "-dev" | sort -V | tail -n1)
+    fi
+
+    # Checkout the new tag if found
+    if [[ -n "${new_tag}" ]]; then
+      git checkout -q "${new_tag}"
+      success_msg "Updated to version ${new_tag}"
+    fi
+
+    status_msg "Relaunching..."
     sleep 1  # Give user a chance to see the message
     # Get the absolute path of the main script
     local main_script
