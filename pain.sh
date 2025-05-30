@@ -34,10 +34,11 @@ function check_euid() {
 }
 
 function ensure_sudo() {
-    warning_msg "This script requires sudo privileges to perform the following:"
-    warning_msg "- install packages"
+    warning_msg "This script requires sudo privileges to perform the following puppet-related tasks:"
+    warning_msg "- install/remove packages"
     warning_msg "- manage services"
-    warning_msg "- handle system puppet files"
+    warning_msg "- handle system files"
+    warning_msg "Please enter your sudo password to continue."
 
     # Clear any existing sudo tokens/cached credentials
     sudo -k
