@@ -176,4 +176,5 @@ check_latest_versions
 get_pain_version
 
 # Enter main menu
+clear -x
 main_menu

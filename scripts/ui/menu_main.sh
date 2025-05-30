@@ -12,8 +12,8 @@
 # ┃ This file may be distributed under the terms of the GNU GPLv3 license ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-clear -x
 set -e
+clear -x
 
 #===================================================#
 #================== MENU UI COMPONENTS =============#
