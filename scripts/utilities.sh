@@ -29,6 +29,10 @@ function success_msg() {
     echo -e "${GREEN}[✔] ${1}${NC}"
 }
 
+function info_header_msg() {
+    echo -e "${CYAN}[ℹ] ${1}${NC}"
+}
+
 function info_msg() {
     echo -e "${CYAN}[ℹ] ${NC}${1}"
 }
