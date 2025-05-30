@@ -188,7 +188,7 @@ function main_menu_input() {
             *)
                 echo -e "${CURSOR_UP}${CLEAR_LINE}${RED}Invalid option${NC}"
                 sleep 1
-                echo -e "${CURSOR_UP}${CLEAR_LINE}"
+                echo -e "${CURSOR_UP}${CLEAR_LINE}${CURSOR_UP}"
                 ;;
         esac
     done
