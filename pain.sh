@@ -150,6 +150,8 @@ function check_pain_update() {
   # Set the current version first
   set_pain_version
 
+  info_msg "Checking for updates..."
+
   # Fetch updates quietly
   git -C "${PAIN_DIR}" fetch -q origin main 2>/dev/null
 
@@ -163,8 +165,26 @@ function check_pain_update() {
   fi
 }
 
+function pain_update_prompt() {
+  local current_ver="$1"
+  local latest_ver="$2"
+
+  info_msg "There is a new version of PAIN available."
+  info_msg "Current version: ${current_ver}"
+  info_msg "Latest version:  ${latest_ver}"
+  echo
+  read -p "Would you like to update PAIN? [y/N] " -n 1 -r
+  echo
+
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    update_pain
+  fi
+}
+
 function update_pain() {
   cd "${PAIN_DIR}" || return
+
+  info_msg "Updating PAIN..."
 
   # Check if we're on the default branch
   local current_branch
@@ -183,21 +203,6 @@ function update_pain() {
     return 1
   fi
 }
-
-function pain_update_prompt() {
-  local current_ver="$1"
-  local latest_ver="$2"
-
-  status_msg "Current version: ${current_ver}"
-  status_msg "Latest version:  ${latest_ver}"
-  echo
-  read -p "Would you like to update PAIN? [y/N] " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    update_pain
-  fi
-}
-
 
 #===================================================#
 #=================== MAIN SCRIPT ===================#
