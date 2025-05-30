@@ -109,10 +109,6 @@ function print_main_menu() {
     echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${BLACK}[Q] Quit${WHITE}                 ┃${NC}"
 }
 
-function print_prompt() {
-    echo -en "${PURPLE}Enter option: ${NC}"
-}
-
 #===================================================#
 #=================== MENU LOGIC ====================#
 #===================================================#
@@ -181,21 +177,21 @@ function get_puppet_info() {
 }
 
 function main_menu_input() {
-    print_prompt
-    read -r main_menu_option
-    case "${main_menu_option}" in
-        1) install_menu ;;
-        2) setup_menu ;;
-        3) update_menu ;;
-        R|r) remove_menu ;;
-        Q|q) exit 0 ;;
-        *)
-            echo -e "${CURSOR_UP}${CLEAR_LINE}${RED}Invalid option${NC}"
-            sleep 1
-            echo -e "${CURSOR_UP}${CLEAR_LINE}"
-            main_menu_input
-            ;;
-    esac
+    while true; do
+        read -p "Enter option: " main_menu_option
+        case "${main_menu_option}" in
+            1) install_menu; break;;
+            2) setup_menu; break;;
+            3) update_menu; break;;
+            R|r) remove_menu; break;;
+            Q|q) exit 0; break;;
+            *)
+                echo -e "${CURSOR_UP}${CLEAR_LINE}${RED}Invalid option${NC}"
+                sleep 1
+                echo -e "${CURSOR_UP}${CLEAR_LINE}"
+                ;;
+        esac
+    done
 }
 
 #===================================================#
