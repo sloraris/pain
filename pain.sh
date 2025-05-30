@@ -23,6 +23,27 @@ for script in "${PAIN_DIR}/scripts/"*.sh; do . "${script}"; done
 for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 
 #===================================================#
+#================ SCRIPT PERMISSIONS ================#
+#===================================================#
+
+function ensure_script_permissions() {
+    local main_script="${PAIN_DIR}/pain.sh"
+    local update_script="${PAIN_DIR}/scripts/pain_update.sh"
+
+    # Check if scripts are executable
+    if [[ ! -x "${main_script}" ]] || [[ ! -x "${update_script}" ]]; then
+        warning_msg "Script permissions are not set correctly. Attempting to fix..."
+        chmod +x "${main_script}" "${update_script}" 2>/dev/null || {
+            error_msg "Failed to set executable permissions on scripts." >&2
+            info_msg "Please run the following command to fix the permissions:"
+            info_msg "chmod +x pain.sh"
+            exit 1
+        }
+        success_msg "Script permissions have been corrected."
+    fi
+}
+
+#===================================================#
 #================= SUDO MANAGEMENT ==================#
 #===================================================#
 
@@ -153,8 +174,12 @@ function set_pain_version() {
 #===================================================#
 #=================== MAIN SCRIPT ===================#
 #===================================================#
+
 # Check EUID to prevent running as root
 check_euid
+
+# Check script permissions before anything else
+ensure_script_permissions
 
 # Show splash screen first so user sees what they're running
 splash_screen
