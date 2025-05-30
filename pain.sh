@@ -163,6 +163,11 @@ function check_pain_update() {
   if [[ -n "${latest_ver}" && "${PAIN_VERSION}" != "${latest_ver}" ]]; then
     pain_update_prompt "${PAIN_VERSION}" "${latest_ver}"
   fi
+
+  # If no new version is available, notify and continue
+  if [[ -z "${latest_ver}" ]]; then
+    success_msg "You are running the latest version of PAIN."
+  fi
 }
 
 function pain_update_prompt() {
