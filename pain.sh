@@ -24,6 +24,23 @@ for script in "${PAIN_DIR}/scripts/"*.sh; do . "${script}"; done
 for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 
 #===================================================#
+#================= VERSION CHECKING ================#
+#===================================================#
+
+function check_latest_versions() {
+    # Update apt cache quietly
+    apt-get update -qq 2>/dev/null
+
+    # Get latest available versions
+    LATEST_SERVER_VER=$(apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "N/A")
+    LATEST_AGENT_VER=$(apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "N/A")
+
+    # Export these for use in other scripts
+    export LATEST_SERVER_VER
+    export LATEST_AGENT_VER
+}
+
+#===================================================#
 #=================== UPDATE PAIN ===================#
 #===================================================#
 
@@ -83,6 +100,7 @@ function get_pain_version() {
 # check_if_ratos
 # check_euid
 # init_logfile
+check_latest_versions
 get_pain_version
 splash_screen
 main_menu
