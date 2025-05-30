@@ -132,13 +132,13 @@ function update_pain() {
 
 function get_pain_version() {
   local version padding_left padding_right
-  version="v. unknown"
+  version="unknown"
 
   if [[ -d "${REPO_PATH}/.git" ]]; then
     cd "${REPO_PATH}" || return
 
     if git rev-parse --git-dir > /dev/null 2>&1; then
-      version=$(git describe --always --tags 2>/dev/null | cut -d "-" -f 1,2)
+      version=$(git describe --always --tags 2>/dev/null)
     fi
   fi
 
