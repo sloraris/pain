@@ -13,7 +13,14 @@
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 set -e
-clear -x
+
+# make sure we have the correct permissions while running the script
+umask 027
+
+### sourcing all additional scripts
+PAIN_DIR="$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}")")"
+for script in "${PAIN_DIR}/scripts/"*.sh; do . "${script}"; done
+for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 
 #===================================================#
 #================= SUDO MANAGEMENT ==================#
@@ -21,21 +28,7 @@ clear -x
 
 function check_euid() {
     if [[ $EUID -eq 0 ]]; then
-        echo "Error: This script should not be run directly as root."
-        echo "Please run as a normal user with sudo privileges instead." >&2
-        exit 1
-    fi
-}
-
-function check_sudo() {
-    if ! command -v sudo >/dev/null 2>&1; then
-        echo "Error: 'sudo' command not found. Please install sudo first." >&2
-        exit 1
-    fi
-
-    # Check if we have sudo access at all
-    if ! sudo -v >/dev/null 2>&1; then
-        echo "Error: Current user does not have sudo privileges." >&2
+        error_msg "This script should not be run directly as root. Please run as a normal user with sudo privileges instead." >&2
         exit 1
     fi
 }
@@ -43,11 +36,11 @@ function check_sudo() {
 function ensure_sudo() {
     # Check if we already have sudo cached
     if ! sudo -n true 2>/dev/null; then
-        echo "This script requires sudo access to check package versions and perform installations."
-        echo "Please enter your password to continue."
+        warning_msg "This script requires sudo access to check package versions and perform installations."
+        info_msg "Please enter your password to continue."
         # Ask for sudo password and keep it alive
         if ! sudo -v; then
-            echo "Error: Failed to obtain sudo privileges." >&2
+            error_msg "Failed to obtain sudo privileges." >&2
             exit 1
         fi
     fi
@@ -64,14 +57,6 @@ function ensure_sudo() {
     trap 'kill $SUDO_KEEPER_PID >/dev/null 2>&1' EXIT
 }
 
-# make sure we have the correct permissions while running the script
-umask 027
-
-### sourcing all additional scripts
-PAIN_DIR="$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}")")"
-for script in "${PAIN_DIR}/scripts/"*.sh; do . "${script}"; done
-for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
-
 #===================================================#
 #================= VERSION CHECKING ================#
 #===================================================#
@@ -79,7 +64,7 @@ for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 function check_latest_versions() {
     # Try to update apt cache, but handle errors
     if ! sudo apt-get update -qq 2>/dev/null; then
-        echo "Warning: Failed to update apt cache. Version checks may be inaccurate." >&2
+        warning_msg "Failed to update apt cache. Version checks may be inaccurate." >&2
         # Set fallback values
         LATEST_SERVER_VER="unknown"
         LATEST_AGENT_VER="unknown"
@@ -91,13 +76,13 @@ function check_latest_versions() {
     LATEST_SERVER_VER=$(sudo apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
     if [[ -z "${LATEST_SERVER_VER}" ]]; then
         LATEST_SERVER_VER="unknown"
-        echo "Warning: Could not determine latest Puppet Server version" >&2
+        warning_msg "Could not determine latest Puppet Server version" >&2
     fi
 
     LATEST_AGENT_VER=$(sudo apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
     if [[ -z "${LATEST_AGENT_VER}" ]]; then
         LATEST_AGENT_VER="unknown"
-        echo "Warning: Could not determine latest Puppet Agent version" >&2
+        warning_msg "Could not determine latest Puppet Agent version" >&2
     fi
 
     # Export these for use in other scripts
@@ -123,16 +108,16 @@ function update_pain() {
   local current_branch
   current_branch=$(git branch --show-current)
   if [[ "${current_branch}" != "main" ]]; then
-    status_msg "Cannot update: You are on branch '${current_branch}' instead of 'main'"
+    warning_msg "Cannot update - You are on branch '${current_branch}' instead of 'main'"
     return 1
   fi
 
   # Quietly pull updates (only occurs if on default branch)
   if git pull -q origin main; then
-    ok_msg "PAIN updated successfully. Please relaunch."
+    success_msg "PAIN updated successfully. Please relaunch."
     exit 0
   else
-    error_msg "Failed to update PAIN"
+    error_msg "Failed to update PAIN."
     return 1
   fi
 }
@@ -170,9 +155,9 @@ function get_pain_version() {
 #=================== MAIN SCRIPT ===================#
 #===================================================#
 check_euid
-check_sudo
 ensure_sudo
 check_latest_versions
 get_pain_version
+clear -x
 splash_screen
 main_menu
