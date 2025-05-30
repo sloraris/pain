@@ -177,7 +177,7 @@ function get_puppet_info() {
 }
 
 function main_menu_input() {
-    local prompt="Enter option: "
+    local prompt="Enter option:"
     while true; do
         # Move cursor to start of line and clear it
         echo -en "\r${CLEAR_LINE}${prompt}"
