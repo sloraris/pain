@@ -53,9 +53,9 @@ function pain_update_prompt() {
   local current_ver="$1"
   local latest_ver="$2"
 
-  status_msg "There is a new version of PAIN available."
-  status_msg "Current version: ${current_ver}"
-  status_msg "Latest version:  ${latest_ver}"
+  info_msg "There is a new version of PAIN available."
+  info_msg "Current version: ${current_ver}"
+  info_msg "Latest version:  ${latest_ver}"
   read -p "Would you like to update PAIN? [y/N] " -n 1 -r
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -71,7 +71,7 @@ function pain_update_prompt() {
 function update_pain() {
   cd "${PAIN_DIR}" || return
 
-  info_msg "Updating PAIN..."
+  status_msg "Updating PAIN..."
 
   # Check if we're on the default branch
   local current_branch
@@ -85,7 +85,11 @@ function update_pain() {
   if git pull -q origin main; then
     success_msg "PAIN updated successfully. Relaunching..."
     sleep 1  # Give user a chance to see the message
-    exec "${BASH_SOURCE[0]}" "$@"  # Relaunch the script with the same arguments
+    # Get the absolute path of the script
+    local script_path
+    script_path=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")
+    cd "${PAIN_DIR}" || exit 1
+    exec "${script_path}" "$@"
   else
     error_msg "Failed to update PAIN."
     return 1
