@@ -15,8 +15,43 @@
 set -e
 clear -x
 
+#===================================================#
+#================= SUDO MANAGEMENT ==================#
+#===================================================#
+
+function check_sudo() {
+    if ! command -v sudo >/dev/null 2>&1; then
+        echo "Error: 'sudo' command not found. Please install sudo first." >&2
+        exit 1
+    fi
+}
+
+function ensure_sudo() {
+    # Check if we already have sudo cached
+    if ! sudo -n true 2>/dev/null; then
+        echo "This script requires sudo access to check package versions and perform installations."
+        echo "Please enter your password to continue."
+        # Ask for sudo password and keep it alive
+        sudo -v || {
+            echo "Error: Failed to obtain sudo privileges." >&2
+            exit 1
+        }
+    fi
+
+    # Keep sudo alive in the background
+    while true; do
+        sudo -n true
+        sleep 50
+        kill -0 "$$" || exit
+    done 2>/dev/null &
+}
+
 # make sure we have the correct permissions while running the script
-umask 022
+umask 027
+
+### Initial sudo setup
+check_sudo
+ensure_sudo
 
 ### sourcing all additional scripts
 PAIN_DIR="$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -29,7 +64,7 @@ for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 
 function check_latest_versions() {
     # Try to update apt cache, but handle errors
-    if ! apt-get update -qq 2>/dev/null; then
+    if ! sudo apt-get update -qq 2>/dev/null; then
         echo "Warning: Failed to update apt cache. Version checks may be inaccurate." >&2
         # Set fallback values
         LATEST_SERVER_VER="unknown"
@@ -39,13 +74,13 @@ function check_latest_versions() {
     fi
 
     # Get latest available versions with error checking
-    LATEST_SERVER_VER=$(apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
+    LATEST_SERVER_VER=$(sudo apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
     if [[ -z "${LATEST_SERVER_VER}" ]]; then
         LATEST_SERVER_VER="unknown"
         echo "Warning: Could not determine latest Puppet Server version" >&2
     fi
 
-    LATEST_AGENT_VER=$(apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
+    LATEST_AGENT_VER=$(sudo apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
     if [[ -z "${LATEST_AGENT_VER}" ]]; then
         LATEST_AGENT_VER="unknown"
         echo "Warning: Could not determine latest Puppet Agent version" >&2
