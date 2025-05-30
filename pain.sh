@@ -34,16 +34,29 @@ function check_euid() {
 }
 
 function ensure_sudo() {
-    # Check if we already have sudo cached
-    if ! sudo -n true 2>/dev/null; then
-        warning_msg "This script requires sudo access to check package versions and perform installations."
-        info_msg "Please enter your password to continue."
-        # Ask for sudo password and keep it alive
-        if ! sudo -v; then
-            error_msg "Failed to obtain sudo privileges." >&2
-            exit 1
-        fi
+    # First check if we have sudo privileges without a password
+    if sudo -n true 2>/dev/null; then
+        info_msg "Sudo credentials cached, proceeding..."
+        return 0
     fi
+
+    # If we don't have cached credentials, try to get them
+    info_msg "This script requires sudo privileges to continue."
+    info_msg "Please enter your password when prompted."
+
+    # Try to get sudo privileges
+    if ! sudo -v; then
+        error_msg "Failed to obtain sudo privileges." >&2
+        exit 1
+    fi
+
+    # Verify we actually got sudo access
+    if ! sudo -n true; then
+        error_msg "Failed to verify sudo access after password entry." >&2
+        exit 1
+    fi
+
+    info_msg "Successfully obtained sudo privileges."
 
     # Keep sudo alive in the background
     (while true; do
@@ -154,10 +167,19 @@ function get_pain_version() {
 #===================================================#
 #=================== MAIN SCRIPT ===================#
 #===================================================#
+# Check EUID to prevent running as root
 check_euid
+
+# Show splash screen first so user sees what they're running
+splash_screen
+clear -x
+
+# Ensure sudo access
 ensure_sudo
+
+# Continue with the rest of initialization
 check_latest_versions
 get_pain_version
-clear -x
-splash_screen
+
+# Enter main menu
 main_menu
