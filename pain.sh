@@ -138,7 +138,13 @@ function get_pain_version() {
     cd "${PAIN_DIR}" || return
 
     if git rev-parse --git-dir > /dev/null 2>&1; then
-      version=$(git describe --always --tags 2>/dev/null)
+      # Get the tag and extract just the version part (v0.0.0-dev)
+      version=$(git describe --always --tags 2>/dev/null | cut -d "-" -f 1,2)
+
+      # Ensure version doesn't exceed 14 chars (16 minus 2 for padding)
+      if [[ ${#version} -gt 14 ]]; then
+        version="${version:0:14}"
+      fi
     fi
   fi
 
