@@ -106,7 +106,7 @@ function print_puppet_info() {
 function print_main_menu() {
     echo -e "${WHITE}┃     ${GREEN}[1] Install                              ${RED}[R] Remove${WHITE}               ┃${NC}"
     echo -e "${WHITE}┃     ${GREEN}[2] Setup${WHITE}                                                         ┃${NC}"
-    echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${BLACK}[Q] Quit${WHITE}                 ┃${NC}"
+    echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${NC}[Q] Quit${WHITE}                 ┃${NC}"
 }
 
 #===================================================#

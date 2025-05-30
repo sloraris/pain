@@ -61,7 +61,7 @@ function credits() {
 }
 
 function version() {
-    echo -e "${WHITE}┃                             ${BLACK}${PAIN_VERSION_FORMATTED}${WHITE}                            ┃${NC}"
+    echo -e "${WHITE}┃                             ${NC}${PAIN_VERSION_FORMATTED}${WHITE}                            ┃${NC}"
 }
 
 function title() {
