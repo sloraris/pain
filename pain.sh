@@ -160,7 +160,13 @@ function check_pain_update() {
 
   # Get latest version from remote, using only direct tag references
   local latest_ver
-  latest_ver=$(git -C "${PAIN_DIR}" ls-remote --refs --tags origin | sort -V | tail -n1 | cut -d'/' -f3 | cut -d "-" -f 1,2)
+  if [[ "${PAIN_VERSION}" == *"-dev"* ]]; then
+    # If current version is dev, look for latest dev version
+    latest_ver=$(git -C "${PAIN_DIR}" ls-remote --refs --tags origin | grep -- "-dev$" | cut -d'/' -f3 | sort -V | tail -n1)
+  else
+    # If current version is release, look for latest release version
+    latest_ver=$(git -C "${PAIN_DIR}" ls-remote --refs --tags origin | grep -v -- "-dev" | cut -d'/' -f3 | sort -V | tail -n1)
+  fi
 
   # If versions are different and latest is not empty, prompt for update
   if [[ -n "${latest_ver}" && "${PAIN_VERSION}" != "${latest_ver}" ]]; then
