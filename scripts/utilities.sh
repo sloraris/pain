@@ -32,3 +32,7 @@ function success_msg() {
 function info_msg() {
     echo -e "${CYAN}[ℹ] ${1}${NC}"
 }
+
+function status_msg() {
+    echo -e "${BLUE}[*] ${1}${NC}"
+}

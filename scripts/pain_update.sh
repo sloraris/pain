@@ -22,7 +22,7 @@ function check_pain_update() {
   # Set the current version first
   set_pain_version
 
-  info_msg "Checking for updates..."
+  status_msg "Checking for updates..."
 
   # Fetch updates quietly
   git -C "${PAIN_DIR}" fetch -q origin main 2>/dev/null
@@ -43,8 +43,8 @@ function check_pain_update() {
   fi
 
   # If no new version is available, notify and continue
-  if [[ -z "${latest_ver}" ]]; then
-    success_msg "You are running the latest version of PAIN."
+  if [[ "${PAIN_VERSION}" == "${latest_ver}" ]]; then
+    status_msg "You are running the latest version of PAIN."
     PAIN_VERSION_FORMATTED="${GREEN}${PAIN_VERSION}${NC}"
   fi
 }
@@ -53,9 +53,9 @@ function pain_update_prompt() {
   local current_ver="$1"
   local latest_ver="$2"
 
-  info_msg "There is a new version of PAIN available."
-  info_msg "Current version: ${current_ver}"
-  info_msg "Latest version:  ${latest_ver}"
+  status_msg "There is a new version of PAIN available."
+  status_msg "Current version: ${current_ver}"
+  status_msg "Latest version:  ${latest_ver}"
   read -p "Would you like to update PAIN? [y/N] " -n 1 -r
 
   if [[ $REPLY =~ ^[Yy]$ ]]; then
