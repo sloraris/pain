@@ -55,7 +55,8 @@ function check_euid() {
 }
 
 function ensure_sudo() {
-    info_msg "This script requires sudo privileges to perform the following puppet-related tasks:"
+    warning_msg "This script requires sudo privileges."
+    info_msg "Sudo will be used to perform the following puppet-related tasks:"
     info_msg "- install/remove packages"
     info_msg "- manage services"
     info_msg "- handle system files"
