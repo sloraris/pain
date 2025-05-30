@@ -209,8 +209,9 @@ function update_pain() {
 
   # Quietly pull updates (only occurs if on default branch)
   if git pull -q origin main; then
-    success_msg "PAIN updated successfully. Please relaunch."
-    exit 0
+    success_msg "PAIN updated successfully. Relaunching..."
+    sleep 1  # Give user a chance to see the message
+    exec "${BASH_SOURCE[0]}" "$@"  # Relaunch the script with the same arguments
   else
     error_msg "Failed to update PAIN."
     return 1
