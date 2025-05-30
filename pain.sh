@@ -19,9 +19,23 @@ clear -x
 #================= SUDO MANAGEMENT ==================#
 #===================================================#
 
+function check_euid() {
+    if [[ $EUID -eq 0 ]]; then
+        echo "Error: This script should not be run directly as root."
+        echo "Please run as a normal user with sudo privileges instead." >&2
+        exit 1
+    fi
+}
+
 function check_sudo() {
     if ! command -v sudo >/dev/null 2>&1; then
         echo "Error: 'sudo' command not found. Please install sudo first." >&2
+        exit 1
+    fi
+
+    # Check if we have sudo access at all
+    if ! sudo -v >/dev/null 2>&1; then
+        echo "Error: Current user does not have sudo privileges." >&2
         exit 1
     fi
 }
@@ -32,26 +46,26 @@ function ensure_sudo() {
         echo "This script requires sudo access to check package versions and perform installations."
         echo "Please enter your password to continue."
         # Ask for sudo password and keep it alive
-        sudo -v || {
+        if ! sudo -v; then
             echo "Error: Failed to obtain sudo privileges." >&2
             exit 1
-        }
+        fi
     fi
 
     # Keep sudo alive in the background
-    while true; do
+    (while true; do
         sudo -n true
         sleep 50
-        kill -0 "$$" || exit
-    done 2>/dev/null &
+        kill -0 "$$" 2>/dev/null || exit
+    done) &
+
+    # Store the background process ID so we can kill it on exit
+    SUDO_KEEPER_PID=$!
+    trap 'kill $SUDO_KEEPER_PID >/dev/null 2>&1' EXIT
 }
 
 # make sure we have the correct permissions while running the script
 umask 027
-
-### Initial sudo setup
-check_sudo
-ensure_sudo
 
 ### sourcing all additional scripts
 PAIN_DIR="$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -155,9 +169,9 @@ function get_pain_version() {
 #===================================================#
 #=================== MAIN SCRIPT ===================#
 #===================================================#
-# check_if_ratos
-# check_euid
-# init_logfile
+check_euid
+check_sudo
+ensure_sudo
 check_latest_versions
 get_pain_version
 splash_screen
