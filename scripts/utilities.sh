@@ -30,7 +30,7 @@ function success_msg() {
 }
 
 function info_msg() {
-    echo -e "${CYAN}[ℹ] ${1}${NC}"
+    echo -e "${CYAN}[ℹ] ${NC}${1}"
 }
 
 function status_msg() {
