@@ -17,21 +17,38 @@
 
 set -e
 
-function menu_header() {
-    local menu_name="$1"
-    local total_width=71  # Total width of the header line without the corners
-    local name_length=${#menu_name}
-    local padding_each_side=$(( (total_width - name_length - 2) / 2 ))  # -2 for the spaces around menu name
+function center_text() {
+    local text="$1"              # The text to center
+    local text_color="${2:-$WHITE}" # Color for the centered text (default: WHITE)
+    local filler="${3:-━}"       # Character to use for padding (default: ━)
+    local left_edge="${4:-┃}"    # Left edge character (default: ┃)
+    local right_edge="${5:-┃}"   # Right edge character (default: ┃)
+    local add_spaces="${6:-true}" # Whether to add spaces around the text
 
-    local left_padding=$(printf '%*s' "$padding_each_side" '' | sed 's/ /━/g')
-    local right_padding=$(printf '%*s' "$padding_each_side" '' | sed 's/ /━/g')
+    local total_width=71         # Fixed width for all menu items (excluding edges)
+    local text_length=${#text}
+    local space_padding=""
 
-    # Add an extra ━ to the right side if the name length plus padding is odd
-    if (( (name_length + 2 + padding_each_side * 2) < total_width )); then
-        right_padding+="━"
+    if [[ "$add_spaces" == "true" ]]; then
+        text=" ${text} "
+        text_length=$((text_length + 2))
     fi
 
-    echo -e "${WHITE}┏${left_padding} ${PURPLE}${menu_name}${WHITE} ${right_padding}┓${NC}"
+    local padding_each_side=$(( (total_width - text_length) / 2 ))
+    local left_padding=$(printf '%*s' "$padding_each_side" '' | sed "s/ /${filler}/g")
+    local right_padding=$(printf '%*s' "$padding_each_side" '' | sed "s/ /${filler}/g")
+
+    # Add an extra filler character to the right side if the text length plus padding is odd
+    if (( (text_length + padding_each_side * 2) < total_width )); then
+        right_padding+="${filler}"
+    fi
+
+    echo -e "${WHITE}${left_edge}${left_padding}${text_color}${text}${NC}${right_padding}${WHITE}${right_edge}${NC}"
+}
+
+function menu_header() {
+    local menu_name="$1"
+    center_text "$menu_name" "${PURPLE}" "━" "┏" "┓"
     er
 }
 
@@ -73,8 +90,11 @@ function credits() {
 }
 
 function version() {
-    # right padding should be less than left due to floor division (variable padding will justify to the left on uneven numbers)
-    echo -e "${WHITE}┃                            ${PAIN_VERSION_FORMATTED}                           ┃${NC}"
+    if [[ "${PAIN_VERSION_STATUS}" == "current" ]]; then
+        center_text "${PAIN_VERSION}" "${GREEN}" " "
+    else
+        center_text "${PAIN_VERSION}" "${YELLOW}" " "
+    fi
 }
 
 function title() {

@@ -109,22 +109,6 @@ function set_pain_version() {
 
   # Export the raw version for other functions to use
   PAIN_VERSION="${version}"
-
-  # If version is already 16 chars, use it as-is
-  if [[ ${#version} -eq 16 ]]; then
-    PAIN_VERSION_FORMATTED="${version}"
-  else
-    # Calculate padding for centering (16 is the target width)
-    padding_left=$(( (16 - ${#version}) / 2 ))
-    padding_right=$(( 16 - ${#version} - padding_left ))
-
-    # Create the padding strings
-    padding_left=$(printf "%${padding_left}s" "")
-    padding_right=$(printf "%${padding_right}s" "")
-
-    # Set the global formatted version
-    PAIN_VERSION_FORMATTED="${padding_left}${version}${padding_right}"
-  fi
 }
 
 # ╠════════════════════════════╣ MAIN SCRIPT ╠════════════════════════════╣
