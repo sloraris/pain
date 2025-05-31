@@ -23,21 +23,21 @@ function print_puppet_info() {
 
     # Format the status string
     if [[ "${mode}" == "Server/Agent" ]]; then
-        formatted_mode="${GREEN}$(printf "%-16s" "Server/Agent")${WHITE}"
+        formatted_mode="${GREEN}$(printf "%-16s" "Server/Agent")${NC}"
     elif [[ "${mode}" == "Server only" ]]; then
-        formatted_mode="${GREEN}$(printf "%-16s" "Server only")${WHITE}"
+        formatted_mode="${GREEN}$(printf "%-16s" "Server only")${NC}"
     elif [[ "${mode}" == "Agent only" ]]; then
-        formatted_mode="${GREEN}$(printf "%-16s" "Agent only")${WHITE}"
+        formatted_mode="${GREEN}$(printf "%-16s" "Agent only")${NC}"
     else
-        formatted_mode="${RED}$(printf "%-16s" "Not installed")${WHITE}"
+        formatted_mode="${RED}$(printf "%-16s" "Not installed")${NC}"
     fi
 
     hostname=$(hostname)
     hostname=$(printf "%-16s" "${hostname}")
-    hostname="${BLUE}${hostname}${WHITE}"
+    hostname="${BLUE}${hostname}${NC}"
 
-    echo -e "${WHITE}┃        Host: ${hostname}                                         ┃${NC}"
-    echo -e "${WHITE}┃        Mode: ${formatted_mode}                                         ┃${NC}"
+    echo -e "┃        Host: ${hostname}                                         ┃"
+    echo -e "┃        Mode: ${formatted_mode}                                         ┃"
 }
 
 function print_main_menu() {
@@ -47,30 +47,30 @@ function print_main_menu() {
 
     # Format install menu option
     if [[ "${PUPPET_MODE}" == "Not installed" ]]; then
-        install_menu_option="${RED}${install}${WHITE}"
+        install_menu_option="${RED}${install}${NC}"
     else
-        install_menu_option="${GREEN}${install}${WHITE}"
+        install_menu_option="${GREEN}${install}${NC}"
     fi
 
     # Format setup menu option
     if [[ -f /etc/puppet/puppet.conf ]]; then
-        setup_menu_option="${GREEN}${setup}${WHITE}"
+        setup_menu_option="${GREEN}${setup}${NC}"
     else
-        setup_menu_option="${RED}${setup}${WHITE}"
+        setup_menu_option="${RED}${setup}${NC}"
     fi
 
     # Format update menu option
     if [[ "${PUPPET_SERVER_VER_STATUS}" == "current" && "${PUPPET_AGENT_VER_STATUS}" == "current" ]]; then
-        update_menu_option="${GREEN}${update}${WHITE}"
+        update_menu_option="${GREEN}${update}${NC}"
     elif [[ "${PUPPET_SERVER_VER_STATUS}" == "outdated" && "${PUPPET_AGENT_VER_STATUS}" == "outdated" ]]; then
-        update_menu_option="${YELLOW}${update}${WHITE}"
+        update_menu_option="${YELLOW}${update}${NC}"
     else
-        update_menu_option="${RED}${update}${WHITE}"
+        update_menu_option="${RED}${update}${NC}"
     fi
 
-    echo -e "${WHITE}┃     ${install_menu_option}                              ${NC}[R] Remove${WHITE}               ┃${NC}"
-    echo -e "${WHITE}┃     ${setup_menu_option}                                                         ┃${NC}"
-    echo -e "${WHITE}┃     ${update_menu_option}                               ${NC}[Q] Quit${WHITE}                 ┃${NC}"
+    echo -e "┃     ${install_menu_option}                              ${NC}[R] Remove${NC}               ┃"
+    echo -e "┃     ${setup_menu_option}                                                         ┃"
+    echo -e "┃     ${update_menu_option}                               ${NC}[Q] Quit${NC}                 ┃"
 }
 
 # ╠═════════════════════════════╣ MENU LOGIC ╠════════════════════════════╣
@@ -103,8 +103,7 @@ function main_menu() {
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ menu_header
 # ┃                                                                       ┃
 # ┃        Host: ****************                                         ┃ print_puppet_info
-# ┃      Status: ****************                                         ┃
-# ┃     Version: ****************                                         ┃ print_puppet_info
+# ┃        Mode: ****************                                         ┃ print_puppet_info
 # ┃                                                                       ┃
 # ┃    ═══════════════════════════════════════════════════════════════    ┃ hr-dashed
 # ┃                                                                       ┃

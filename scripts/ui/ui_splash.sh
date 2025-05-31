@@ -37,10 +37,10 @@ function splash_screen() {
             echo
             top_bar
             for line in "${logo[@]}"; do
-                echo -e "${WHITE}┃${color}${line}${WHITE}                 ┃${NC}"
+                echo -e "┃${color}${line}${NC}                 ┃"
             done
             er
-            echo -e "${WHITE}┃                Puppet Assisted Installation Navigator                 ┃${NC}"
+            echo -e "┃                Puppet Assisted Installation Navigator                 ┃"
             er
             credits
             bottom_bar

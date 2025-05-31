@@ -23,16 +23,13 @@ function center_text() {
     local filler="${3:-━}"       # Character to use for padding (default: ━)
     local left_edge="${4:-┃}"    # Left edge character (default: ┃)
     local right_edge="${5:-┃}"   # Right edge character (default: ┃)
-    local add_spaces="${6:-true}" # Whether to add spaces around the text
 
     local total_width=71         # Fixed width for all menu items (excluding edges)
     local text_length=${#text}
     local space_padding=""
 
-    if [[ "$add_spaces" == "true" ]]; then
-        text=" ${text} "
-        text_length=$((text_length + 2))
-    fi
+    text=" ${text} "
+    text_length=$((text_length + 2))
 
     local padding_each_side=$(( (total_width - text_length) / 2 ))
     local left_padding=$(printf '%*s' "$padding_each_side" '' | sed "s/ /${filler}/g")
@@ -43,7 +40,7 @@ function center_text() {
         right_padding+="${filler}"
     fi
 
-    echo -e "${WHITE}${left_edge}${left_padding}${text_color}${text}${NC}${right_padding}${WHITE}${right_edge}${NC}"
+    echo -e "${left_edge}${left_padding} ${text_color}${text}${NC} ${right_padding}${right_edge}"
 }
 
 function menu_header() {
@@ -53,13 +50,13 @@ function menu_header() {
 }
 
 function top_bar() {
-    echo -e "${WHITE}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓${NC}"
+    echo -e "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
     er
 }
 
 function bottom_bar() {
     er
-    echo -e "${WHITE}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${NC}"
+    echo -e "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
 }
 
 function hr() {
@@ -67,26 +64,26 @@ function hr() {
 }
 
 function hr-dashed() {
-    echo -e "${WHITE}┃    ═══════════════════════════════════════════════════════════════    ┃${NC}"
+    echo -e "┃    ${WHITE}═══════════════════════════════════════════════════════════════${NC}    ┃"
 }
 
 function er() {
-    echo -e "${WHITE}┃                                                                       ┃${NC}"
+    echo -e "┃                                                                       ┃"
 }
 
 function logo() {
 
-    echo -e  "${WHITE}┃                ${PURPLE}██████╗     █████╗    ██╗   ███╗   ██╗${WHITE}                 ┃${NC}"
-    echo -e  "${WHITE}┃                ${PURPLE}██╔══██╗   ██╔══██╗   ██║   ████╗  ██║${WHITE}                 ┃${NC}"
-    echo -e  "${WHITE}┃                ${PURPLE}██████╔╝   ███████║   ██║   ██╔██╗ ██║${WHITE}                 ┃${NC}"
-    echo -e  "${WHITE}┃                ${PURPLE}██╔═══╝    ██╔══██║   ██║   ██║╚██╗██║${WHITE}                 ┃${NC}"
-    echo -e  "${WHITE}┃                ${PURPLE}██║        ██║  ██║   ██║   ██║ ╚████║${WHITE}                 ┃${NC}"
-    echo -e  "${WHITE}┃                ${PURPLE}╚═╝        ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝${WHITE}                 ┃${NC}"
-    echo -e  "${WHITE}┃                Puppet Assisted Installation Navigator                 ┃${NC}"
+    echo -e  "┃                ${PURPLE}██████╗     █████╗    ██╗   ███╗   ██╗${NC}                 ┃"
+    echo -e  "┃                ${PURPLE}██╔══██╗   ██╔══██╗   ██║   ████╗  ██║${NC}                 ┃"
+    echo -e  "┃                ${PURPLE}██████╔╝   ███████║   ██║   ██╔██╗ ██║${NC}                 ┃"
+    echo -e  "┃                ${PURPLE}██╔═══╝    ██╔══██║   ██║   ██║╚██╗██║${NC}                 ┃"
+    echo -e  "┃                ${PURPLE}██║        ██║  ██║   ██║   ██║ ╚████║${NC}                 ┃"
+    echo -e  "┃                ${PURPLE}╚═╝        ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝${NC}                 ┃"
+    echo -e  "┃                Puppet Assisted Installation Navigator                 ┃"
 }
 
 function credits() {
-    echo -e  "${WHITE}┃                           ${PURPLE}a tool by sloraris${WHITE}                          ┃${NC}"
+    echo -e  "┃                           ${PURPLE}a tool by sloraris${NC}                          ┃"
 }
 
 function version() {
