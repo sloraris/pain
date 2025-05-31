@@ -23,46 +23,45 @@ function print_puppet_info() {
 
     # Format the status string
     if [[ "${status}" == "Server/Agent" ]]; then
-        formatted_status="${GREEN}Server/Agent${WHITE}"
+        formatted_status="${GREEN}$(printf "%-16s" "Server/Agent")${WHITE}"
     elif [[ "${status}" == "Server only" ]]; then
-        formatted_status="${GREEN}Server only${WHITE}"
+        formatted_status="${GREEN}$(printf "%-16s" "Server only")${WHITE}"
     elif [[ "${status}" == "Agent only" ]]; then
-        formatted_status="${GREEN}Agent only${WHITE}"
+        formatted_status="${GREEN}$(printf "%-16s" "Agent only")${WHITE}"
     else
-        formatted_status="${RED}Not installed${WHITE}"
+        formatted_status="${RED}$(printf "%-16s" "Not installed")${WHITE}"
     fi
-    formatted_status=$(printf "%-16s" "${formatted_status}")
 
     # Format the version string
     if [[ "${status}" == "Server/Agent" ]]; then
         # Format server version
         case "${PUPPET_SERVER_VER_STATUS}" in
             "current")
-                formatted_server="${GREEN}${PUPPET_SERVER_VER}${WHITE}"
+                formatted_server="${GREEN}$(printf "%8s-" "${PUPPET_SERVER_VER}")${WHITE}"
                 ;;
             "unknown")
-                formatted_server="${YELLOW}${PUPPET_SERVER_VER}${WHITE}"
+                formatted_server="${YELLOW}$(printf "%8s-" "${PUPPET_SERVER_VER}")${WHITE}"
                 ;;
             *)
-                formatted_server="${RED}${PUPPET_SERVER_VER}${WHITE}"
+                formatted_server="${RED}$(printf "%8s-" "${PUPPET_SERVER_VER}")${WHITE}"
                 ;;
         esac
 
         # Format agent version
         case "${PUPPET_AGENT_VER_STATUS}" in
             "current")
-                formatted_agent="${GREEN}${PUPPET_AGENT_VER}${WHITE}"
+                formatted_agent="${GREEN}$(printf "%-8s" "${PUPPET_AGENT_VER}")${WHITE}"
                 ;;
             "unknown")
-                formatted_agent="${YELLOW}${PUPPET_AGENT_VER}${WHITE}"
+                formatted_agent="${YELLOW}$(printf "%-8s" "${PUPPET_AGENT_VER}")${WHITE}"
                 ;;
             *)
-                formatted_agent="${RED}${PUPPET_AGENT_VER}${WHITE}"
+                formatted_agent="${RED}$(printf "%-8s" "${PUPPET_AGENT_VER}")${WHITE}"
                 ;;
         esac
 
         # Combine the formatted versions with proper padding
-        formatted_version=$(printf "%-16s" "${formatted_server}/${formatted_agent}")
+        formatted_version="${formatted_server}/${formatted_agent}"
     else
         local version_to_show
         local version_status
