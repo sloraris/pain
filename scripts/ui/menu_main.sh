@@ -21,7 +21,18 @@ function print_puppet_info() {
 
     status="${PUPPET_MODE}"
 
-    # Format the version string with proper padding before adding color
+    # Format the status string
+    if [[ "${status}" == "Server/Agent" ]]; then
+        formatted_status="${GREEN}Server/Agent${WHITE}"
+    elif [[ "${status}" == "Server only" ]]; then
+        formatted_status="${GREEN}Server only${WHITE}"
+    elif [[ "${status}" == "Agent only" ]]; then
+        formatted_status="${GREEN}Agent only${WHITE}"
+    else
+        formatted_status="${RED}Not installed${WHITE}"
+    fi
+
+    # Format the version string
     if [[ "${status}" == "Server/Agent" ]]; then
         # Format server version
         case "${PUPPET_SERVER_VER_STATUS}" in
