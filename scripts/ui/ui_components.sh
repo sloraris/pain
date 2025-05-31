@@ -28,7 +28,7 @@ function center_text() {
     local text_length=${#text}
     local space_padding=""
 
-    text=" ${text} "
+    text=" ${text} " # Default single-space padding around text to be centered
     text_length=$((text_length + 2))
 
     local padding_each_side=$(( (total_width - text_length) / 2 ))
@@ -40,7 +40,7 @@ function center_text() {
         right_padding+="${filler}"
     fi
 
-    echo -e "${left_edge}${left_padding} ${text_color}${text}${NC} ${right_padding}${right_edge}"
+    echo -e "${left_edge}${left_padding}${text_color}${text}${NC}${right_padding}${right_edge}"
 }
 
 function menu_header() {
