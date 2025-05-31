@@ -55,28 +55,31 @@ function update_apt_cache() {
 function check_packages_installed() {
     local has_server has_agent status
 
-    has_server=$(dpkg -l | grep -q puppetserver && echo true || echo false)
-    has_agent=$(dpkg -l | grep -q puppet-agent && echo true || echo false)
+    # Check if puppet is installed and available
+    if command -v puppet >/dev/null 2>&1; then
+        has_server=$(dpkg -l | grep -q puppetserver && echo true || echo false)
+        has_agent=$(dpkg -l | grep -q puppet-agent && echo true || echo false)
 
-    if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then # Server and Agent installed
-        info_msg "Server and Agent packages detected. Device will operate in 'Server/Agent' mode."
-        status="Server/Agent"
-        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-    elif [[ "${has_server}" == "true" && "${has_agent}" == "false" ]]; then # Server only installed
-        info_msg "Server package detected. Device will operate in 'Server only' mode."
-        status="Server only"
-        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-        PUPPET_AGENT_VER="N/A"
-        PUPPET_AGENT_VER_STATUS="none"
-    elif [[ "${has_server}" == "false" && "${has_agent}" == "true" ]]; then # Agent only installed
-        info_msg "Agent package detected. Device will operate in 'Agent only' mode."
-        status="Agent only"
-        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-        PUPPET_SERVER_VER="N/A"
-        PUPPET_SERVER_VER_STATUS="none"
+        if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then # Server and Agent installed
+            info_msg "Server and Agent packages detected. Device will operate in 'Server/Agent' mode."
+            status="Server/Agent"
+            PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+            PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+        elif [[ "${has_server}" == "true" && "${has_agent}" == "false" ]]; then # Server only installed
+            info_msg "Server package detected. Device will operate in 'Server only' mode."
+            status="Server only"
+            PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+            PUPPET_AGENT_VER="N/A"
+            PUPPET_AGENT_VER_STATUS="none"
+        elif [[ "${has_server}" == "false" && "${has_agent}" == "true" ]]; then # Agent only installed
+            info_msg "Agent package detected. Device will operate in 'Agent only' mode."
+            status="Agent only"
+            PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+            PUPPET_SERVER_VER="N/A"
+            PUPPET_SERVER_VER_STATUS="none"
+        fi
     else
-        status_msg "No Puppet packages detected. They can be installed from the 'Install' menu."
+        status_msg "Puppet is not installed or not available. It can be installed from the 'Install' menu."
         status="Not installed"
         PUPPET_SERVER_VER="N/A"
         PUPPET_AGENT_VER="N/A"
