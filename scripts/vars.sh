@@ -32,3 +32,7 @@ CLEAR_LINE="\033[K"
 # ╠════════════════════════════════╣ VARS ╠═══════════════════════════════╣
 PAIN_VERSION=""
 PAIN_VERSION_STATUS=""
+PUPPET_SERVER_VER=""
+PUPPET_SERVER_VER_STATUS=""
+PUPPET_AGENT_VER=""
+PUPPET_AGENT_VER_STATUS=""

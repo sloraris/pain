@@ -17,11 +17,9 @@ clear -x
 
 # ╠════════════════════════╣ MAIN MENU COMPONENTS ╠═══════════════════════╣
 function print_puppet_info() {
-    local puppet_info status version version_status hostname
+    local puppet_info status hostname
     puppet_info=$(get_puppet_info)
     status=$(echo "${puppet_info}" | cut -d'|' -f1)
-    version=$(echo "${puppet_info}" | cut -d'|' -f2)
-    version_status=$(echo "${puppet_info}" | cut -d'|' -f3)
 
     # Format the status string with proper padding before adding color
     if [[ "${status}" == "Not installed" ]]; then
@@ -34,55 +32,56 @@ function print_puppet_info() {
 
     # Format the version string with proper padding before adding color
     if [[ "${status}" == "Server/Agent" ]]; then
-        # Split version and status for server and agent
-        server_ver=$(echo "${version}" | cut -d'|' -f1)
-        agent_ver=$(echo "${version}" | cut -d'|' -f2)
-        server_status=$(echo "${version_status}" | cut -d'|' -f1)
-        agent_status=$(echo "${version_status}" | cut -d'|' -f2)
-
-        # Format combined version string
-        combined_ver=$(printf "%-8s/%-7s" "${server_ver}" "${agent_ver}")
-
-        case "${server_status}" in
+        # Format server version
+        case "${PUPPET_SERVER_VER_STATUS}" in
             "current")
-                formatted_server="${GREEN}${server_ver}${WHITE}"
-                ;;
-            "outdated")
-                formatted_server="${RED}${server_ver}${WHITE}"
+                formatted_server="${GREEN}${PUPPET_SERVER_VER}${WHITE}"
                 ;;
             "unknown")
-                formatted_server="${YELLOW}${server_ver}${WHITE}"
+                formatted_server="${YELLOW}${PUPPET_SERVER_VER}${WHITE}"
+                ;;
+            *)
+                formatted_server="${RED}${PUPPET_SERVER_VER}${WHITE}"
                 ;;
         esac
 
-        case "${agent_status}" in
+        # Format agent version
+        case "${PUPPET_AGENT_VER_STATUS}" in
             "current")
-                formatted_agent="${GREEN}${agent_ver}${WHITE}"
-                ;;
-            "outdated")
-                formatted_agent="${RED}${agent_ver}${WHITE}"
+                formatted_agent="${GREEN}${PUPPET_AGENT_VER}${WHITE}"
                 ;;
             "unknown")
-                formatted_agent="${YELLOW}${agent_ver}${WHITE}"
+                formatted_agent="${YELLOW}${PUPPET_AGENT_VER}${WHITE}"
+                ;;
+            *)
+                formatted_agent="${RED}${PUPPET_AGENT_VER}${WHITE}"
                 ;;
         esac
 
         # Combine the formatted versions with proper padding
         formatted_version=$(printf "%-16s" "${formatted_server}/${formatted_agent}")
     else
-        version=$(printf "%-16s" "${version}")
+        local version_to_show
+        local version_status
+
+        if [[ "${status}" == "Server only" ]]; then
+            version_to_show="${PUPPET_SERVER_VER}"
+            version_status="${PUPPET_SERVER_VER_STATUS}"
+        else
+            version_to_show="${PUPPET_AGENT_VER}"
+            version_status="${PUPPET_AGENT_VER_STATUS}"
+        fi
+
+        version_to_show=$(printf "%-16s" "${version_to_show}")
         case "${version_status}" in
             "current")
-                formatted_version="${GREEN}${version}${WHITE}"
-                ;;
-            "outdated")
-                formatted_version="${RED}${version}${WHITE}"
+                formatted_version="${GREEN}${version_to_show}${WHITE}"
                 ;;
             "unknown")
-                formatted_version="${YELLOW}${version}${WHITE}"
+                formatted_version="${YELLOW}${version_to_show}${WHITE}"
                 ;;
-            "none")
-                formatted_version="${RED}${version}${WHITE}"
+            *)
+                formatted_version="${RED}${version_to_show}${WHITE}"
                 ;;
         esac
     fi
@@ -104,67 +103,68 @@ function print_main_menu() {
 
 # ╠═════════════════════════════╣ MENU LOGIC ╠════════════════════════════╣
 function get_puppet_info() {
-    local has_server has_agent status server_ver agent_ver server_status agent_status
+    local has_server has_agent status
 
     has_server=$(dpkg -l | grep -q puppetserver && echo true || echo false)
     has_agent=$(dpkg -l | grep -q puppet-agent && echo true || echo false)
 
-    if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then
+    if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then # Server and Agent installed
         status="Server/Agent"
-        server_ver=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
-        agent_ver=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
+        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
+        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
 
         # Check server version status
         if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
-            server_status="unknown"
-        elif [[ "${server_ver}" == "${LATEST_SERVER_VER}" ]]; then
-            server_status="current"
+            PUPPET_SERVER_VER_STATUS="unknown"
+        elif [[ "${PUPPET_SERVER_VER}" == "${LATEST_SERVER_VER}" ]]; then
+            PUPPET_SERVER_VER_STATUS="current"
         else
-            server_status="outdated"
+            PUPPET_SERVER_VER_STATUS="outdated"
         fi
 
         # Check agent version status
         if [[ "${LATEST_AGENT_VER}" == "unknown" ]]; then
-            agent_status="unknown"
-        elif [[ "${agent_ver}" == "${LATEST_AGENT_VER}" ]]; then
-            agent_status="current"
+            PUPPET_AGENT_VER_STATUS="unknown"
+        elif [[ "${PUPPET_AGENT_VER}" == "${LATEST_AGENT_VER}" ]]; then
+            PUPPET_AGENT_VER_STATUS="current"
         else
-            agent_status="outdated"
+            PUPPET_AGENT_VER_STATUS="outdated"
         fi
-
-        version="${server_ver}|${agent_ver}"
-        version_status="${server_status}|${agent_status}"
-    elif [[ "${has_server}" == "true" ]]; then
+    elif [[ "${has_server}" == "true" ]]; then # Server only installed
         status="Server only"
-        server_ver=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
-        version="${server_ver}"
+        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
+        PUPPET_AGENT_VER="N/A"
 
         if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
-            version_status="unknown"
-        elif [[ "${server_ver}" == "${LATEST_SERVER_VER}" ]]; then
-            version_status="current"
+            PUPPET_SERVER_VER_STATUS="unknown"
+        elif [[ "${PUPPET_SERVER_VER}" == "${LATEST_SERVER_VER}" ]]; then
+            PUPPET_SERVER_VER_STATUS="current"
         else
-            version_status="outdated"
+            PUPPET_SERVER_VER_STATUS="outdated"
         fi
-    elif [[ "${has_agent}" == "true" ]]; then
+        PUPPET_AGENT_VER_STATUS="none"
+    elif [[ "${has_agent}" == "true" ]]; then # Agent only installed
         status="Agent only"
-        agent_ver=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
-        version="${agent_ver}"
+        PUPPET_SERVER_VER="N/A"
+        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
 
+        PUPPET_SERVER_VER_STATUS="none"
         if [[ "${LATEST_AGENT_VER}" == "unknown" ]]; then
-            version_status="unknown"
-        elif [[ "${agent_ver}" == "${LATEST_AGENT_VER}" ]]; then
-            version_status="current"
+            PUPPET_AGENT_VER_STATUS="unknown"
+        elif [[ "${PUPPET_AGENT_VER}" == "${LATEST_AGENT_VER}" ]]; then
+            PUPPET_AGENT_VER_STATUS="current"
         else
-            version_status="outdated"
+            PUPPET_AGENT_VER_STATUS="outdated"
         fi
     else
         status="Not installed"
-        version="N/A"
-        version_status="none"
+        PUPPET_SERVER_VER="N/A"
+        PUPPET_AGENT_VER="N/A"
+        PUPPET_SERVER_VER_STATUS="none"
+        PUPPET_AGENT_VER_STATUS="none"
     fi
 
-    echo "${status}|${version}|${version_status}"
+    echo "${status}"
 }
 
 function main_menu_input() {
