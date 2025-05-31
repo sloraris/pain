@@ -47,8 +47,6 @@ function print_main_menu() {
 
     # Format install menu option
     if [[ "${PUPPET_MODE}" == "Not installed" ]]; then
-        install_menu_option="${RED}${install}${NC}"
-    else
         install_menu_option="${GREEN}${install}${NC}"
     fi
 
@@ -56,12 +54,12 @@ function print_main_menu() {
     if [[ -f /etc/puppet/puppet.conf ]]; then
         setup_menu_option="${GREEN}${setup}${NC}"
     else
-        setup_menu_option="${RED}${setup}${NC}"
+        setup_menu_option="${YELLOW}${setup}${NC}"
     fi
 
     # Format update menu option
     if [[ "${PUPPET_SERVER_VER_STATUS}" == "current" && "${PUPPET_AGENT_VER_STATUS}" == "current" ]]; then
-        update_menu_option="${GREEN}${update}${NC}"
+        update_menu_option="${update}"
     elif [[ "${PUPPET_SERVER_VER_STATUS}" == "outdated" && "${PUPPET_AGENT_VER_STATUS}" == "outdated" ]]; then
         update_menu_option="${YELLOW}${update}${NC}"
     else
