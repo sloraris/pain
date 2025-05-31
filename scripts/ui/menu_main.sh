@@ -31,7 +31,7 @@ function print_puppet_info() {
     else
         formatted_status="${RED}Not installed${WHITE}"
     fi
-    status=$(printf "%-16s" "${formatted_status}")
+    formatted_status=$(printf "%-16s" "${formatted_status}")
 
     # Format the version string
     if [[ "${status}" == "Server/Agent" ]]; then
