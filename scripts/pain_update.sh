@@ -82,27 +82,28 @@ function update_pain() {
   fi
 
   # Fetch all updates including tags
-  if ! git fetch --tags origin main; then
+  if ! git fetch --all --tags; then
     error_msg "Failed to fetch updates."
     return 1
   fi
 
-  # Quietly pull updates (only occurs if on default branch)
-  if git pull -q origin main; then
   # Get the latest matching tag type (dev or release)
-    local new_tag
-    if [[ "${PAIN_VERSION}" == *"-dev"* ]]; then
-      new_tag=$(git tag -l | grep -- "-dev$" | sort -V | tail -n1)
-    else
-      new_tag=$(git tag -l | grep -v -- "-dev" | sort -V | tail -n1)
-    fi
+  local new_tag
+  if [[ "${PAIN_VERSION}" == *"-dev"* ]]; then
+    new_tag=$(git tag -l | grep -- "-dev$" | sort -V | tail -n1)
+  else
+    new_tag=$(git tag -l | grep -v -- "-dev" | sort -V | tail -n1)
+  fi
 
-    # Checkout the new tag if found
-    if [[ -n "${new_tag}" ]]; then
-      git checkout -q "${new_tag}"
-      success_msg "Updated to version ${new_tag}"
-    fi
+  # If no new tag found, error out
+  if [[ -z "${new_tag}" ]]; then
+    error_msg "No valid tag found to update to."
+    return 1
+  fi
 
+  # Reset any local changes and checkout the tag directly
+  if git reset --hard origin/main && git clean -fd && git checkout -q "${new_tag}"; then
+    success_msg "Updated to version ${new_tag}"
     status_msg "Relaunching..."
     sleep 1  # Give user a chance to see the message
     # Get the absolute path of the main script

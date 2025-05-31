@@ -23,7 +23,7 @@ for script in "${PAIN_DIR}/scripts/"*.sh; do . "${script}"; done
 for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 
 #===================================================#
-#================ SCRIPT PERMISSIONS ================#
+#=============== SCRIPT PERMISSIONS ================#
 #===================================================#
 
 function ensure_script_permissions() {
@@ -44,7 +44,7 @@ function ensure_script_permissions() {
 }
 
 #===================================================#
-#================= SUDO MANAGEMENT ==================#
+#================= SUDO MANAGEMENT =================#
 #===================================================#
 
 function check_euid() {
