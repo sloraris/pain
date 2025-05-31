@@ -44,10 +44,14 @@ function print_main_menu() {
     local install="[1] Install"
     local setup="[2] Setup"
     local update="[3] Update"
+    local remove="[R] Remove"
 
     # Format install menu option
     if [[ "${PUPPET_MODE}" == "Not installed" ]]; then
         install_menu_option="${GREEN}${install}${NC}"
+    else
+        install_menu_option="${install}"
+        remove_menu_option="${RED}${remove}${NC}"
     fi
 
     # Format setup menu option
@@ -66,9 +70,9 @@ function print_main_menu() {
         update_menu_option="${RED}${update}${NC}"
     fi
 
-    echo -e "┃     ${install_menu_option}                              ${NC}[R] Remove${NC}               ┃"
+    echo -e "┃     ${install_menu_option}                              ${remove_menu_option}               ┃"
     echo -e "┃     ${setup_menu_option}                                                         ┃"
-    echo -e "┃     ${update_menu_option}                               ${NC}[Q] Quit${NC}                 ┃"
+    echo -e "┃     ${update_menu_option}                               [Q] Quit                 ┃"
 }
 
 # ╠═════════════════════════════╣ MENU LOGIC ╠════════════════════════════╣
