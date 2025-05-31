@@ -110,8 +110,8 @@ function get_puppet_info() {
 
     if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then # Server and Agent installed
         status="Server/Agent"
-        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
-        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
+        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
 
         # Check server version status
         if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
@@ -132,7 +132,7 @@ function get_puppet_info() {
         fi
     elif [[ "${has_server}" == "true" ]]; then # Server only installed
         status="Server only"
-        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/puppetserver/ {print $3}' | cut -d'-' -f1)
+        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
         PUPPET_AGENT_VER="N/A"
 
         if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
@@ -146,7 +146,7 @@ function get_puppet_info() {
     elif [[ "${has_agent}" == "true" ]]; then # Agent only installed
         status="Agent only"
         PUPPET_SERVER_VER="N/A"
-        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/puppet-agent/ {print $3}' | cut -d'-' -f1)
+        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
 
         PUPPET_SERVER_VER_STATUS="none"
         if [[ "${LATEST_AGENT_VER}" == "unknown" ]]; then
