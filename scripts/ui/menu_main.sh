@@ -17,75 +17,19 @@ clear -x
 
 # ╠════════════════════════╣ MAIN MENU COMPONENTS ╠═══════════════════════╣
 function print_puppet_info() {
-    local status hostname
+    local mode hostname
 
-    status="${PUPPET_MODE}"
+    mode="${PUPPET_MODE}"
 
     # Format the status string
-    if [[ "${status}" == "Server/Agent" ]]; then
-        formatted_status="${GREEN}$(printf "%-16s" "Server/Agent")${WHITE}"
-    elif [[ "${status}" == "Server only" ]]; then
-        formatted_status="${GREEN}$(printf "%-16s" "Server only")${WHITE}"
-    elif [[ "${status}" == "Agent only" ]]; then
-        formatted_status="${GREEN}$(printf "%-16s" "Agent only")${WHITE}"
+    if [[ "${mode}" == "Server/Agent" ]]; then
+        formatted_mode="${GREEN}$(printf "%-16s" "Server/Agent")${WHITE}"
+    elif [[ "${mode}" == "Server only" ]]; then
+        formatted_mode="${GREEN}$(printf "%-16s" "Server only")${WHITE}"
+    elif [[ "${mode}" == "Agent only" ]]; then
+        formatted_mode="${GREEN}$(printf "%-16s" "Agent only")${WHITE}"
     else
-        formatted_status="${RED}$(printf "%-16s" "Not installed")${WHITE}"
-    fi
-
-    # Format the version string
-    if [[ "${status}" == "Server/Agent" ]]; then
-        # Format server version
-        case "${PUPPET_SERVER_VER_STATUS}" in
-            "current")
-                formatted_server="${GREEN}$(printf "%8s-" "${PUPPET_SERVER_VER}")${WHITE}"
-                ;;
-            "unknown")
-                formatted_server="${YELLOW}$(printf "%8s-" "${PUPPET_SERVER_VER}")${WHITE}"
-                ;;
-            *)
-                formatted_server="${RED}$(printf "%8s-" "${PUPPET_SERVER_VER}")${WHITE}"
-                ;;
-        esac
-
-        # Format agent version
-        case "${PUPPET_AGENT_VER_STATUS}" in
-            "current")
-                formatted_agent="${GREEN}$(printf "%-8s" "${PUPPET_AGENT_VER}")${WHITE}"
-                ;;
-            "unknown")
-                formatted_agent="${YELLOW}$(printf "%-8s" "${PUPPET_AGENT_VER}")${WHITE}"
-                ;;
-            *)
-                formatted_agent="${RED}$(printf "%-8s" "${PUPPET_AGENT_VER}")${WHITE}"
-                ;;
-        esac
-
-        # Combine the formatted versions with proper padding
-        formatted_version="${formatted_server}/${formatted_agent}"
-    else
-        local version_to_show
-        local version_status
-
-        if [[ "${status}" == "Server only" ]]; then
-            version_to_show="${PUPPET_SERVER_VER}"
-            version_status="${PUPPET_SERVER_VER_STATUS}"
-        else
-            version_to_show="${PUPPET_AGENT_VER}"
-            version_status="${PUPPET_AGENT_VER_STATUS}"
-        fi
-
-        version_to_show=$(printf "%-16s" "${version_to_show}")
-        case "${version_status}" in
-            "current")
-                formatted_version="${GREEN}${version_to_show}${WHITE}"
-                ;;
-            "unknown")
-                formatted_version="${YELLOW}${version_to_show}${WHITE}"
-                ;;
-            *)
-                formatted_version="${RED}${version_to_show}${WHITE}"
-                ;;
-        esac
+        formatted_mode="${RED}$(printf "%-16s" "Not installed")${WHITE}"
     fi
 
     hostname=$(hostname)
@@ -93,12 +37,11 @@ function print_puppet_info() {
     hostname="${BLUE}${hostname}${WHITE}"
 
     echo -e "${WHITE}┃        Host: ${hostname}                                         ┃${NC}"
-    echo -e "${WHITE}┃      Status: ${formatted_status}                                         ┃${NC}"
-    echo -e "${WHITE}┃     Version: ${formatted_version}                                         ┃${NC}"
+    echo -e "${WHITE}┃        Mode: ${formatted_mode}                                         ┃${NC}"
 }
 
 function print_main_menu() {
-    echo -e "${WHITE}┃     ${GREEN}[1] Install                              ${RED}[R] Remove${WHITE}               ┃${NC}"
+    echo -e "${WHITE}┃     ${GREEN}[1] Install                              ${NC}[R] Remove${WHITE}               ┃${NC}"
     echo -e "${WHITE}┃     ${GREEN}[2] Setup${WHITE}                                                         ┃${NC}"
     echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${NC}[Q] Quit${WHITE}                 ┃${NC}"
 }
