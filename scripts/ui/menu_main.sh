@@ -41,9 +41,36 @@ function print_puppet_info() {
 }
 
 function print_main_menu() {
-    echo -e "${WHITE}┃     ${GREEN}[1] Install                              ${NC}[R] Remove${WHITE}               ┃${NC}"
-    echo -e "${WHITE}┃     ${GREEN}[2] Setup${WHITE}                                                         ┃${NC}"
-    echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${NC}[Q] Quit${WHITE}                 ┃${NC}"
+    local install="[1] Install"
+    local setup="[2] Setup"
+    local update="[3] Update"
+
+    # Format install menu option
+    if [[ "${PUPPET_MODE}" == "Not installed" ]]; then
+        install_menu_option="${RED}${install}${WHITE}"
+    else
+        install_menu_option="${GREEN}${install}${WHITE}"
+    fi
+
+    # Format setup menu option
+    if [[ -f /etc/puppet/puppet.conf ]]; then
+        setup_menu_option="${GREEN}${setup}${WHITE}"
+    else
+        setup_menu_option="${RED}${setup}${WHITE}"
+    fi
+
+    # Format update menu option
+    if [[ "${PUPPET_SERVER_VER_STATUS}" == "current" && "${PUPPET_AGENT_VER_STATUS}" == "current" ]]; then
+        update_menu_option="${GREEN}${update}${WHITE}"
+    elif [[ "${PUPPET_SERVER_VER_STATUS}" == "outdated" && "${PUPPET_AGENT_VER_STATUS}" == "outdated" ]]; then
+        update_menu_option="${YELLOW}${update}${WHITE}"
+    else
+        update_menu_option="${RED}${update}${WHITE}"
+    fi
+
+    echo -e "${WHITE}┃     ${install_menu_option}                              ${NC}[R] Remove${WHITE}               ┃${NC}"
+    echo -e "${WHITE}┃     ${setup_menu_option}                                                         ┃${NC}"
+    echo -e "${WHITE}┃     ${update_menu_option}                               ${NC}[Q] Quit${WHITE}                 ┃${NC}"
 }
 
 # ╠═════════════════════════════╣ MENU LOGIC ╠════════════════════════════╣
