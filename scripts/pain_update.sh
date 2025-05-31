@@ -14,10 +14,6 @@
 
 set -e
 
-#===================================================#
-#================= UPDATE CHECKING =================#
-#===================================================#
-
 function check_pain_update() {
   # Set the current version first
   set_pain_version

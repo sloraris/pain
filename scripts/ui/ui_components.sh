@@ -17,9 +17,6 @@
 
 set -e
 
-#===================================================#
-#================== FRAMEWORK PARTS ================#
-#===================================================#
 function menu_header() {
     local menu_name="$1"
     local total_width=71  # Total width of the header line without the corners
@@ -60,9 +57,6 @@ function er() {
     echo -e "${WHITE}┃                                                                       ┃${NC}"
 }
 
-#===================================================#
-#============= TITLE, CREDITS, & VERSION ===========#
-#===================================================#
 function logo() {
 
     echo -e  "${WHITE}┃                ${PURPLE}██████╗     █████╗    ██╗   ███╗   ██╗${WHITE}                 ┃${NC}"

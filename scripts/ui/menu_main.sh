@@ -15,10 +15,7 @@
 set -e
 clear -x
 
-#===================================================#
-#================== MENU UI COMPONENTS =============#
-#===================================================#
-
+# ╠════════════════════════╣ MAIN MENU COMPONENTS ╠═══════════════════════╣
 function print_puppet_info() {
     local puppet_info status version version_status hostname
     puppet_info=$(get_puppet_info)
@@ -105,9 +102,7 @@ function print_main_menu() {
     echo -e "${WHITE}┃     ${GREEN}[3] Update                               ${NC}[Q] Quit${WHITE}                 ┃${NC}"
 }
 
-#===================================================#
-#=================== MENU LOGIC ====================#
-#===================================================#
+# ╠═════════════════════════════╣ MENU LOGIC ╠════════════════════════════╣
 function get_puppet_info() {
     local has_server has_agent status server_ver agent_ver server_status agent_status
 
@@ -196,11 +191,8 @@ function main_menu_input() {
     done
 }
 
-#===================================================#
-#=================== MAIN MENU ====================#
-#===================================================#
+# ╠═════════════════════════════╣ MAIN MENU ╠═════════════════════════════╣
 function main_menu() {
-
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN MENU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ menu_header
 # ┃                                                                       ┃
 # ┃        Host: ****************                                         ┃ print_puppet_info

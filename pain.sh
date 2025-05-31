@@ -22,9 +22,8 @@ PAIN_DIR="$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}")")"
 for script in "${PAIN_DIR}/scripts/"*.sh; do . "${script}"; done
 for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 
-#===================================================#
-#=============== SCRIPT PERMISSIONS ================#
-#===================================================#
+
+# ╠════════════════════════╣ SCRIPT PERMISSIONS ╠═════════════════════════╣
 
 function ensure_script_permissions() {
     local main_script="${PAIN_DIR}/pain.sh"
@@ -43,9 +42,7 @@ function ensure_script_permissions() {
     fi
 }
 
-#===================================================#
-#================= SUDO MANAGEMENT =================#
-#===================================================#
+# ╠══════════════════════════╣ SUDO MANAGEMENT ╠══════════════════════════╣
 
 function check_euid() {
     if [[ $EUID -eq 0 ]]; then
@@ -91,9 +88,7 @@ function ensure_sudo() {
     trap 'kill $SUDO_KEEPER_PID >/dev/null 2>&1' EXIT
 }
 
-#===================================================#
-#================= PACKAGE CHECKING ================#
-#===================================================#
+# ╠══════════════════════════╣ PACKAGE CHECKING ╠═════════════════════════╣
 
 function check_package_versions() {
     # Try to update apt cache, but handle errors
@@ -131,9 +126,7 @@ function check_package_versions() {
     fi
 }
 
-#===================================================#
-#=================== PAIN VERSION ==================#
-#===================================================#
+# ╠════════════════════════════╣ PAIN VERSION ╠═══════════════════════════╣
 
 function set_pain_version() {
   local version="unknown"
@@ -172,9 +165,7 @@ function set_pain_version() {
   fi
 }
 
-#===================================================#
-#=================== MAIN SCRIPT ===================#
-#===================================================#
+# ╠════════════════════════════╣ MAIN SCRIPT ╠════════════════════════════╣
 
 # Check EUID to prevent running as root
 check_euid
