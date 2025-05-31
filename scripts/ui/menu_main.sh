@@ -40,8 +40,9 @@ function print_puppet_info() {
         server_status=$(echo "${version_status}" | cut -d'|' -f1)
         agent_status=$(echo "${version_status}" | cut -d'|' -f2)
 
-        # Format server version
-        server_ver=$(printf "%-8s" "${server_ver}")
+        # Format combined version string
+        combined_ver=$(printf "%-8s/%-7s" "${server_ver}" "${agent_ver}")
+
         case "${server_status}" in
             "current")
                 formatted_server="${GREEN}${server_ver}${WHITE}"
@@ -54,8 +55,6 @@ function print_puppet_info() {
                 ;;
         esac
 
-        # Format agent version
-        agent_ver=$(printf "%-8s" "${agent_ver}")
         case "${agent_status}" in
             "current")
                 formatted_agent="${GREEN}${agent_ver}${WHITE}"
@@ -68,7 +67,8 @@ function print_puppet_info() {
                 ;;
         esac
 
-        formatted_version="${formatted_server}/${formatted_agent}"
+        # Combine the formatted versions with proper padding
+        formatted_version=$(printf "%-16s" "${formatted_server}/${formatted_agent}")
     else
         version=$(printf "%-16s" "${version}")
         case "${version_status}" in
