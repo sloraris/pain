@@ -88,44 +88,6 @@ function ensure_sudo() {
     trap 'kill $SUDO_KEEPER_PID >/dev/null 2>&1' EXIT
 }
 
-# ╠══════════════════════════╣ PACKAGE CHECKING ╠═════════════════════════╣
-
-function check_package_versions() {
-    # Try to update apt cache, but handle errors
-    if ! sudo apt-get update -qq 2>/dev/null; then
-        warning_msg "Failed to update apt cache. Version checks may be inaccurate." >&2
-        # Set fallback values
-        LATEST_SERVER_VER="unknown"
-        LATEST_AGENT_VER="unknown"
-        export LATEST_SERVER_VER LATEST_AGENT_VER
-        return 1
-    fi
-
-    # Get latest available versions with error checking
-    LATEST_SERVER_VER=$(sudo apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
-    if [[ -z "${LATEST_SERVER_VER}" ]]; then
-        LATEST_SERVER_VER="unknown"
-        warning_msg "Could not determine latest Puppet Server version" >&2
-    fi
-
-    LATEST_AGENT_VER=$(sudo apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1)
-    if [[ -z "${LATEST_AGENT_VER}" ]]; then
-        LATEST_AGENT_VER="unknown"
-        warning_msg "Could not determine latest Puppet Agent version" >&2
-    fi
-
-    # Export these for use in other scripts
-    export LATEST_SERVER_VER
-    export LATEST_AGENT_VER
-
-    # Return success only if we got both versions
-    if [[ "${LATEST_SERVER_VER}" != "unknown" && "${LATEST_AGENT_VER}" != "unknown" ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 # ╠════════════════════════════╣ PAIN VERSION ╠═══════════════════════════╣
 
 function set_pain_version() {
