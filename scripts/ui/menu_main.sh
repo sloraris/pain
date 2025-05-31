@@ -78,6 +78,7 @@ function print_main_menu() {
 # ╠═════════════════════════════╣ MENU LOGIC ╠════════════════════════════╣
 function main_menu_input() {
     local prompt="Enter option:"
+    local last_error=0
     while true; do
         # Move cursor to start of line and clear it
         echo -en "\r${CLEAR_LINE}${prompt}"
@@ -93,11 +94,13 @@ function main_menu_input() {
             [Rr]) remove_menu; break;;
             [Qq]) exit 0;;
             *)
-                # Clear input buffer
-                read -t 0.1 -n 100 discard
-                # Show error briefly without creating new lines
-                echo -en "\r${CLEAR_LINE}${RED}Invalid option${NC}"
-                sleep 0.5
+                current_time=$(date +%s%N)
+                # Only show error if 0.5 seconds have passed since last error
+                if (( (current_time - last_error) > 500000000 )); then
+                    # Show error briefly without creating new lines
+                    echo -en "\r${CLEAR_LINE}${RED}Invalid option${NC}"
+                    last_error=$current_time
+                fi
                 ;;
         esac
     done
