@@ -50,57 +50,81 @@ function update_apt_cache() {
     return 0
 }
 
-# ╠═══════════════════════╣ PACKAGE VERSION CHECKS ╠══════════════════════╣
+# ╠═══════════════════════════╣ PACKAGE CHECKS ╠══════════════════════════╣
+# Check if packages are installed and set associated puppet mode
+function check_packages_installed() {
+    local has_server has_agent status
+
+    has_server=$(dpkg -l | grep -q puppetserver && echo true || echo false)
+    has_agent=$(dpkg -l | grep -q puppet-agent && echo true || echo false)
+
+    if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then # Server and Agent installed
+        info_msg "Server and Agent packages detected. Device will operate in 'Server/Agent' mode."
+        status="Server/Agent"
+        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+    elif [[ "${has_server}" == "true" && "${has_agent}" == "false" ]]; then # Server only installed
+        info_msg "Server package detected. Device will operate in 'Server only' mode."
+        status="Server only"
+        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+        PUPPET_AGENT_VER="N/A"
+        PUPPET_AGENT_VER_STATUS="none"
+    elif [[ "${has_server}" == "false" && "${has_agent}" == "true" ]]; then # Agent only installed
+        info_msg "Agent package detected. Device will operate in 'Agent only' mode."
+        status="Agent only"
+        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
+        PUPPET_SERVER_VER="N/A"
+        PUPPET_SERVER_VER_STATUS="none"
+    else
+        status_msg "No Puppet packages detected. They can be installed from the 'Install' menu."
+        status="Not installed"
+        PUPPET_SERVER_VER="N/A"
+        PUPPET_AGENT_VER="N/A"
+        PUPPET_SERVER_VER_STATUS="none"
+        PUPPET_AGENT_VER_STATUS="none"
+    fi
+
+    # Set puppet mode variable for use in menu_main.sh
+    PUPPET_MODE="${status}"
+}
 
 # Get package versions and check for updates
 function check_package_versions() {
     local server_ver agent_ver
     local -A versions=()
 
+    # Get installed versions and determine device mode
+    check_packages_installed
+
     # Update apt cache first if needed
     update_apt_cache
 
-    # Get latest available versions with proper error handling
-    versions["server_latest"]=$(sudo apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "")
-    versions["agent_latest"]=$(sudo apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "")
-
-    # Get installed versions with proper error handling
-    versions["server_installed"]=$(dpkg -l puppetserver 2>/dev/null | awk '/^ii/ {print $3}' | cut -d'-' -f1 || echo "")
-    versions["agent_installed"]=$(dpkg -l puppet-agent 2>/dev/null | awk '/^ii/ {print $3}' | cut -d'-' -f1 || echo "")
-
-    # Export variables for use in menu_main.sh
-    if [[ -z "${versions[server_latest]}" ]]; then
-        export LATEST_SERVER_VER="unknown"
-        warning_msg "Could not determine latest Puppet Server version" >&2
-    else
-        export LATEST_SERVER_VER="${versions[server_latest]}"
+    # Get latest available versions if they are installed
+    if [[ "${PUPPET_SERVER_VER}" != "N/A" ]]; then
+        LATEST_SERVER_VER=$(sudo apt-cache policy puppetserver 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "")
     fi
 
-    if [[ -z "${versions[agent_latest]}" ]]; then
-        export LATEST_AGENT_VER="unknown"
-        warning_msg "Could not determine latest Puppet Agent version" >&2
-    else
-        export LATEST_AGENT_VER="${versions[agent_latest]}"
+    if [[ "${PUPPET_AGENT_VER}" != "N/A" ]]; then
+        LATEST_AGENT_VER=$(sudo apt-cache policy puppet-agent 2>/dev/null | awk '/Candidate:/ {print $2}' | cut -d'-' -f1 || echo "")
     fi
 
-    # Export installed versions for menu_main.sh
-    if [[ -n "${versions[server_installed]}" ]]; then
-        export INSTALLED_SERVER_VER="${versions[server_installed]}"
+
+    # Set update status variables for use in menu_main.sh
+    if [[ "${LATEST_SERVER_VER}" == "${PUPPET_SERVER_VER}" ]]; then
+        PUPPET_SERVER_VER_STATUS="current"
+    elif [[ "${LATEST_SERVER_VER}" > "${PUPPET_SERVER_VER}" ]]; then
+        PUPPET_SERVER_VER_STATUS="outdated"
     else
-        export INSTALLED_SERVER_VER="N/A"
+        PUPPET_SERVER_VER_STATUS="unknown"
+        warning_msg "Could not determine latest Puppet Server version. Version status may be inaccurate." >&2
     fi
 
-    if [[ -n "${versions[agent_installed]}" ]]; then
-        export INSTALLED_AGENT_VER="${versions[agent_installed]}"
+    if [[ "${LATEST_AGENT_VER}" == "${PUPPET_AGENT_VER}" ]]; then
+        PUPPET_AGENT_VER_STATUS="current"
+    elif [[ "${LATEST_AGENT_VER}" > "${PUPPET_AGENT_VER}" ]]; then
+        PUPPET_AGENT_VER_STATUS="outdated"
     else
-        export INSTALLED_AGENT_VER="N/A"
-    fi
-
-    # Return success only if we got both latest versions
-    if [[ "${LATEST_SERVER_VER}" != "unknown" && "${LATEST_AGENT_VER}" != "unknown" ]]; then
-        return 0
-    else
-        warning_msg "Could not determine latest Puppet Server or Agent version" >&2
-        return 1
+        PUPPET_AGENT_VER_STATUS="unknown"
+        warning_msg "Could not determine latest Puppet Agent version. Version status may be inaccurate." >&2
     fi
 }

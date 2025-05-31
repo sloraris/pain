@@ -17,18 +17,9 @@ clear -x
 
 # ╠════════════════════════╣ MAIN MENU COMPONENTS ╠═══════════════════════╣
 function print_puppet_info() {
-    local puppet_info status hostname
-    puppet_info=$(get_puppet_info)
-    status=$(echo "${puppet_info}" | cut -d'|' -f1)
+    local status hostname
 
-    # Format the status string with proper padding before adding color
-    if [[ "${status}" == "Not installed" ]]; then
-        status=$(printf "%-16s" "Not installed")
-        formatted_status="${RED}${status}${WHITE}"
-    else
-        status=$(printf "%-16s" "${status}")
-        formatted_status="${GREEN}${status}${WHITE}"
-    fi
+    status="${PUPPET_MODE}"
 
     # Format the version string with proper padding before adding color
     if [[ "${status}" == "Server/Agent" ]]; then
@@ -102,71 +93,6 @@ function print_main_menu() {
 }
 
 # ╠═════════════════════════════╣ MENU LOGIC ╠════════════════════════════╣
-function get_puppet_info() {
-    local has_server has_agent status
-
-    has_server=$(dpkg -l | grep -q puppetserver && echo true || echo false)
-    has_agent=$(dpkg -l | grep -q puppet-agent && echo true || echo false)
-
-    if [[ "${has_server}" == "true" && "${has_agent}" == "true" ]]; then # Server and Agent installed
-        status="Server/Agent"
-        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-
-        # Check server version status
-        if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
-            PUPPET_SERVER_VER_STATUS="unknown"
-        elif [[ "${PUPPET_SERVER_VER}" == "${LATEST_SERVER_VER}" ]]; then
-            PUPPET_SERVER_VER_STATUS="current"
-        else
-            PUPPET_SERVER_VER_STATUS="outdated"
-        fi
-
-        # Check agent version status
-        if [[ "${LATEST_AGENT_VER}" == "unknown" ]]; then
-            PUPPET_AGENT_VER_STATUS="unknown"
-        elif [[ "${PUPPET_AGENT_VER}" == "${LATEST_AGENT_VER}" ]]; then
-            PUPPET_AGENT_VER_STATUS="current"
-        else
-            PUPPET_AGENT_VER_STATUS="outdated"
-        fi
-    elif [[ "${has_server}" == "true" ]]; then # Server only installed
-        status="Server only"
-        PUPPET_SERVER_VER=$(dpkg -l puppetserver | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-        PUPPET_AGENT_VER="N/A"
-
-        if [[ "${LATEST_SERVER_VER}" == "unknown" ]]; then
-            PUPPET_SERVER_VER_STATUS="unknown"
-        elif [[ "${PUPPET_SERVER_VER}" == "${LATEST_SERVER_VER}" ]]; then
-            PUPPET_SERVER_VER_STATUS="current"
-        else
-            PUPPET_SERVER_VER_STATUS="outdated"
-        fi
-        PUPPET_AGENT_VER_STATUS="none"
-    elif [[ "${has_agent}" == "true" ]]; then # Agent only installed
-        status="Agent only"
-        PUPPET_SERVER_VER="N/A"
-        PUPPET_AGENT_VER=$(dpkg -l puppet-agent | awk '/^ii/ {print $3}' | cut -d'-' -f1)
-
-        PUPPET_SERVER_VER_STATUS="none"
-        if [[ "${LATEST_AGENT_VER}" == "unknown" ]]; then
-            PUPPET_AGENT_VER_STATUS="unknown"
-        elif [[ "${PUPPET_AGENT_VER}" == "${LATEST_AGENT_VER}" ]]; then
-            PUPPET_AGENT_VER_STATUS="current"
-        else
-            PUPPET_AGENT_VER_STATUS="outdated"
-        fi
-    else
-        status="Not installed"
-        PUPPET_SERVER_VER="N/A"
-        PUPPET_AGENT_VER="N/A"
-        PUPPET_SERVER_VER_STATUS="none"
-        PUPPET_AGENT_VER_STATUS="none"
-    fi
-
-    echo "${status}"
-}
-
 function main_menu_input() {
     local prompt="Enter option:"
     while true; do

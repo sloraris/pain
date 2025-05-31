@@ -24,7 +24,6 @@ for script in "${PAIN_DIR}/scripts/ui/"*.sh; do . "${script}"; done
 
 
 # ╠════════════════════════╣ SCRIPT PERMISSIONS ╠═════════════════════════╣
-
 function ensure_script_permissions() {
     local main_script="${PAIN_DIR}/pain.sh"
     local update_script="${PAIN_DIR}/scripts/pain_update.sh"
@@ -43,7 +42,6 @@ function ensure_script_permissions() {
 }
 
 # ╠══════════════════════════╣ SUDO MANAGEMENT ╠══════════════════════════╣
-
 function check_euid() {
     if [[ $EUID -eq 0 ]]; then
         error_msg "This script should not be run directly as root. Please run as a normal user with sudo privileges instead." >&2
