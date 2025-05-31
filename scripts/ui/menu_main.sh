@@ -82,7 +82,10 @@ function main_menu_input() {
         # Move cursor to start of line and clear it
         echo -en "\r${CLEAR_LINE}${prompt}"
         # Read a single character without requiring Enter
-        read -n 1 -t 1 main_menu_option
+        read -n 1 main_menu_option
+        # Clear the line after input
+        echo -en "\r${CLEAR_LINE}"
+
         case "${main_menu_option}" in
             1) install_menu; break;;
             2) setup_menu; break;;
